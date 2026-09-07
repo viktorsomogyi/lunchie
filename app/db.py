@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS recipes (
     carbohydrates_g REAL NOT NULL DEFAULT 0,
     fats_g REAL NOT NULL DEFAULT 0,
     salt_g REAL NOT NULL DEFAULT 0,
+    fiber_g REAL NOT NULL DEFAULT 0,
     nutrition_mode TEXT NOT NULL DEFAULT 'recipe',
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -38,7 +39,8 @@ CREATE TABLE IF NOT EXISTS ingredients (
     protein_g REAL NOT NULL DEFAULT 0,
     carbohydrates_g REAL NOT NULL DEFAULT 0,
     fats_g REAL NOT NULL DEFAULT 0,
-    salt_g REAL NOT NULL DEFAULT 0
+    salt_g REAL NOT NULL DEFAULT 0,
+    fiber_g REAL NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS settings (
@@ -107,8 +109,10 @@ def _migrate(conn: sqlite3.Connection) -> None:
     recipe_cols = _table_columns(conn, "recipes")
     if "nutrition_mode" not in recipe_cols:
         conn.execute("ALTER TABLE recipes ADD COLUMN nutrition_mode TEXT NOT NULL DEFAULT 'recipe'")
+    if "fiber_g" not in recipe_cols:
+        conn.execute("ALTER TABLE recipes ADD COLUMN fiber_g REAL NOT NULL DEFAULT 0")
     ingredient_cols = _table_columns(conn, "ingredients")
-    for column in ("calories_kcal", "protein_g", "carbohydrates_g", "fats_g", "salt_g"):
+    for column in ("calories_kcal", "protein_g", "carbohydrates_g", "fats_g", "salt_g", "fiber_g"):
         if column not in ingredient_cols:
             conn.execute(f"ALTER TABLE ingredients ADD COLUMN {column} REAL NOT NULL DEFAULT 0")
 

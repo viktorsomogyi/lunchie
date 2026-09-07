@@ -56,6 +56,7 @@
     "carbs": "Carbohydrates",
     "fats": "Fats",
     "salt": "Salt",
+    "fiber": "Fiber",
     "kcal": "{n} kcal",
     "grams": "{n} g",
     "per_person": "per person",

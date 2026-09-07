@@ -86,6 +86,7 @@ def _parse_ingredients(form) -> list[Ingredient]:
     carbs = _parse_list(form, "ingredient_carbohydrates_g")
     fats = _parse_list(form, "ingredient_fats_g")
     salts = _parse_list(form, "ingredient_salt_g")
+    fibers = _parse_list(form, "ingredient_fiber_g")
     ingredients: list[Ingredient] = []
     for index, name in enumerate(names):
         name = str(name or "").strip()
@@ -108,6 +109,7 @@ def _parse_ingredients(form) -> list[Ingredient]:
                 carbohydrates_g=_float_field(carbs[index] if index < len(carbs) else 0),
                 fats_g=_float_field(fats[index] if index < len(fats) else 0),
                 salt_g=_float_field(salts[index] if index < len(salts) else 0),
+                fiber_g=_float_field(fibers[index] if index < len(fibers) else 0),
             )
         )
     return ingredients
@@ -138,8 +140,8 @@ def _save_ingredients(conn, recipe_id: int, ingredients: list[Ingredient]) -> No
             """
             INSERT INTO ingredients (
                 recipe_id, name, amount, unit,
-                calories_kcal, protein_g, carbohydrates_g, fats_g, salt_g
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                calories_kcal, protein_g, carbohydrates_g, fats_g, salt_g, fiber_g
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 recipe_id,
@@ -151,6 +153,7 @@ def _save_ingredients(conn, recipe_id: int, ingredients: list[Ingredient]) -> No
                 ing.carbohydrates_g,
                 ing.fats_g,
                 ing.salt_g,
+                ing.fiber_g,
             ),
         )
 
@@ -173,6 +176,7 @@ def _recipe_from_form(form, recipe_id: int | None = None) -> tuple[Recipe, list[
         carbohydrates_g=_float_field(_form_str(form, "carbohydrates_g")),
         fats_g=_float_field(_form_str(form, "fats_g")),
         salt_g=_float_field(_form_str(form, "salt_g")),
+        fiber_g=_float_field(_form_str(form, "fiber_g")),
         nutrition_mode=_nutrition_mode_from_form(form),
         ingredients=ingredients or [Ingredient(name="", amount=0, unit="g")],
     )
@@ -317,9 +321,9 @@ async def admin_recipe_create(request: Request):
                 """
                 INSERT INTO recipes (
                     name, instructions, serves, prep_time_minutes,
-                    calories_kcal, protein_g, carbohydrates_g, fats_g, salt_g,
+                    calories_kcal, protein_g, carbohydrates_g, fats_g, salt_g, fiber_g,
                     nutrition_mode
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     recipe.name,
@@ -331,6 +335,7 @@ async def admin_recipe_create(request: Request):
                     recipe.carbohydrates_g,
                     recipe.fats_g,
                     recipe.salt_g,
+                    recipe.fiber_g,
                     recipe.nutrition_mode,
                 ),
             )
@@ -387,7 +392,7 @@ async def admin_recipe_update(request: Request, recipe_id: int):
                 """
                 UPDATE recipes SET
                     name = ?, instructions = ?, serves = ?, prep_time_minutes = ?,
-                    calories_kcal = ?, protein_g = ?, carbohydrates_g = ?, fats_g = ?, salt_g = ?,
+                    calories_kcal = ?, protein_g = ?, carbohydrates_g = ?, fats_g = ?, salt_g = ?, fiber_g = ?,
                     nutrition_mode = ?, updated_at = datetime('now')
                 WHERE id = ?
                 """,
@@ -401,6 +406,7 @@ async def admin_recipe_update(request: Request, recipe_id: int):
                     recipe.carbohydrates_g,
                     recipe.fats_g,
                     recipe.salt_g,
+                    recipe.fiber_g,
                     recipe.nutrition_mode,
                     recipe_id,
                 ),

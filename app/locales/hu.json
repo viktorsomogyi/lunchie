@@ -56,6 +56,7 @@
     "carbs": "Szénhidrát",
     "fats": "Zsír",
     "salt": "Só",
+    "fiber": "Rost",
     "kcal": "{n} kcal",
     "grams": "{n} g",
     "per_person": "fejenként",

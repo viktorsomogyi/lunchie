@@ -13,6 +13,7 @@ SEED_RECIPES = [
         "carbohydrates_g": 48,
         "fats_g": 18,
         "salt_g": 1.8,
+        "fiber_g": 3,
         "instructions": (
             "1. A csirkét felkockázod, sózod.\n"
             "2. Hagymát dinszteled, hozzáadod a paprikát, majd a húst.\n"
@@ -38,6 +39,7 @@ SEED_RECIPES = [
         "carbohydrates_g": 55,
         "fats_g": 8,
         "salt_g": 1.2,
+        "fiber_g": 16,
         "instructions": (
             "1. A lencsét beáztatod, majd puhára főzöd.\n"
             "2. Hagymát dinszteled, rászórod a lisztet, felöntöd a főzővízzel.\n"
@@ -61,6 +63,7 @@ SEED_RECIPES = [
         "carbohydrates_g": 28,
         "fats_g": 9,
         "salt_g": 1.0,
+        "fiber_g": 4,
         "instructions": (
             "1. A tököt lereszeled.\n"
             "2. Hagymát dinszteled, rátöltöd a tököt, párolod.\n"
@@ -84,6 +87,7 @@ SEED_RECIPES = [
         "carbohydrates_g": 52,
         "fats_g": 32,
         "salt_g": 1.5,
+        "fiber_g": 1,
         "instructions": (
             "1. A sajtot panírozod (liszt, tojás, zsemlemorzsa).\n"
             "2. Forró olajban aranybarnára sütöd.\n"
@@ -108,6 +112,7 @@ SEED_RECIPES = [
         "carbohydrates_g": 42,
         "fats_g": 8,
         "salt_g": 1.1,
+        "fiber_g": 8,
         "instructions": (
             "1. Hagymát dinszteled vajon vagy olajon.\n"
             "2. Hozzáadod a borsót, felöntöd vízzel, puhára főzöd.\n"
@@ -137,9 +142,9 @@ def seed_if_empty() -> None:
                 """
                 INSERT INTO recipes (
                     name, instructions, serves, prep_time_minutes,
-                    calories_kcal, protein_g, carbohydrates_g, fats_g, salt_g,
+                    calories_kcal, protein_g, carbohydrates_g, fats_g, salt_g, fiber_g,
                     nutrition_mode
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     recipe["name"],
@@ -151,6 +156,7 @@ def seed_if_empty() -> None:
                     recipe["carbohydrates_g"],
                     recipe["fats_g"],
                     recipe["salt_g"],
+                    recipe.get("fiber_g", 0),
                     recipe.get("nutrition_mode", "recipe"),
                 ),
             )

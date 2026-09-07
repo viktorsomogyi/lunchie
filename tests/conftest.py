@@ -33,13 +33,14 @@ def insert_recipe(conn, name="Gulyás", **overrides):
         "carbohydrates_g": overrides.get("carbohydrates_g", 30),
         "fats_g": overrides.get("fats_g", 10),
         "salt_g": overrides.get("salt_g", 1),
+        "fiber_g": overrides.get("fiber_g", 2),
     }
     cur = conn.execute(
         """
         INSERT INTO recipes (
             name, instructions, serves, prep_time_minutes,
-            calories_kcal, protein_g, carbohydrates_g, fats_g, salt_g
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            calories_kcal, protein_g, carbohydrates_g, fats_g, salt_g, fiber_g
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             fields["name"],
@@ -51,6 +52,7 @@ def insert_recipe(conn, name="Gulyás", **overrides):
             fields["carbohydrates_g"],
             fields["fats_g"],
             fields["salt_g"],
+            fields["fiber_g"],
         ),
     )
     recipe_id = cur.lastrowid

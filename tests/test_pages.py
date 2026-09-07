@@ -18,6 +18,7 @@ def test_admin_create_edit_delete_recipe(client):
         "carbohydrates_g": "28",
         "fats_g": "9",
         "salt_g": "1",
+        "fiber_g": "4",
         "instructions": "Főzd a tököt.",
         "ingredient_name": ["tök", "tejföl"],
         "ingredient_amount": ["250", "30"],
@@ -136,6 +137,7 @@ def test_ingredient_nutrition_totals_per_serving(client):
         "ingredient_carbohydrates_g": ["0", "8"],
         "ingredient_fats_g": ["20", "0"],
         "ingredient_salt_g": ["1", "0.2"],
+        "ingredient_fiber_g": ["4", "2"],
     }
     created = client.post("/admin/recipes", data=form, follow_redirects=False)
     assert created.status_code == 303
@@ -146,6 +148,7 @@ def test_ingredient_nutrition_totals_per_serving(client):
     assert recipe["carbohydrates_g"] == 4
     assert recipe["fats_g"] == 10
     assert recipe["salt_g"] == 0.6
+    assert recipe["fiber_g"] == 3
     assert recipe["ingredients"][0]["calories_kcal"] == 400
 
     week = client.get("/")

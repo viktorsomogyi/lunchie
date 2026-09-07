@@ -131,6 +131,7 @@ rest:
           - carbohydrates_g
           - fats_g
           - salt_g
+          - fiber_g
 ```
 
 ### Regenerate button (optional)

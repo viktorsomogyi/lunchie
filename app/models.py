@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 
-NUTRITION_FIELDS = ("calories_kcal", "protein_g", "carbohydrates_g", "fats_g", "salt_g")
+NUTRITION_FIELDS = ("calories_kcal", "protein_g", "carbohydrates_g", "fats_g", "salt_g", "fiber_g")
 NUTRITION_MODE_RECIPE = "recipe"
 NUTRITION_MODE_INGREDIENT = "ingredient"
 
@@ -25,6 +25,7 @@ class Ingredient:
     carbohydrates_g: float = 0.0
     fats_g: float = 0.0
     salt_g: float = 0.0
+    fiber_g: float = 0.0
 
     def to_dict(self) -> dict:
         data = {
@@ -49,6 +50,7 @@ class Recipe:
     carbohydrates_g: float = 0.0
     fats_g: float = 0.0
     salt_g: float = 0.0
+    fiber_g: float = 0.0
     nutrition_mode: str = NUTRITION_MODE_RECIPE
     id: int | None = None
     created_at: str | None = None
@@ -110,6 +112,7 @@ def recipe_from_row(row, ingredients: list | None = None) -> Recipe:
         carbohydrates_g=_row_value(row, "carbohydrates_g", 0) or 0,
         fats_g=_row_value(row, "fats_g", 0) or 0,
         salt_g=_row_value(row, "salt_g", 0) or 0,
+        fiber_g=_row_value(row, "fiber_g", 0) or 0,
         nutrition_mode=_row_value(row, "nutrition_mode", NUTRITION_MODE_RECIPE) or NUTRITION_MODE_RECIPE,
         created_at=row["created_at"],
         updated_at=row["updated_at"],
@@ -132,4 +135,5 @@ def ingredient_from_row(row) -> Ingredient:
         carbohydrates_g=_row_value(row, "carbohydrates_g", 0) or 0,
         fats_g=_row_value(row, "fats_g", 0) or 0,
         salt_g=_row_value(row, "salt_g", 0) or 0,
+        fiber_g=_row_value(row, "fiber_g", 0) or 0,
     )
