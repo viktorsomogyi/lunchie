@@ -10,4 +10,21 @@
           onclick="this.closest('.ingredient-row').remove()">
     {{ t('recipe.remove') }}
   </button>
+  <div class="ingredient-nutrition form-grid" {% if recipe.nutrition_mode != 'ingredient' %}hidden{% endif %}>
+    <label>{{ t('recipe.calories') }} (kcal)
+      <input type="number" name="ingredient_calories_kcal" min="0" step="any" value="{{ ingredient.calories_kcal|num }}">
+    </label>
+    <label>{{ t('recipe.protein') }} (g)
+      <input type="number" name="ingredient_protein_g" min="0" step="any" value="{{ ingredient.protein_g|num }}">
+    </label>
+    <label>{{ t('recipe.carbs') }} (g)
+      <input type="number" name="ingredient_carbohydrates_g" min="0" step="any" value="{{ ingredient.carbohydrates_g|num }}">
+    </label>
+    <label>{{ t('recipe.fats') }} (g)
+      <input type="number" name="ingredient_fats_g" min="0" step="any" value="{{ ingredient.fats_g|num }}">
+    </label>
+    <label>{{ t('recipe.salt') }} (g)
+      <input type="number" name="ingredient_salt_g" min="0" step="any" value="{{ ingredient.salt_g|num }}">
+    </label>
+  </div>
 </div>

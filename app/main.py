@@ -3,6 +3,7 @@ from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
 from app.db import get_database_path, init_db
 from app.i18n import load_catalogs
@@ -22,6 +23,7 @@ async def lifespan(_app: FastAPI):
 _STATIC = Path(__file__).resolve().parent / "static"
 
 app = FastAPI(title="Lunchie", lifespan=lifespan)
+app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
 app.mount("/static", StaticFiles(directory=str(_STATIC)), name="static")
 app.include_router(pages.router)
 app.include_router(api.router)

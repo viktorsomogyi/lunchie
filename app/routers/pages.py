@@ -19,7 +19,12 @@ from app.menu import (
     set_day_recipe,
     week_length,
 )
-from app.models import Ingredient, Recipe
+from app.models import (
+    NUTRITION_MODE_INGREDIENT,
+    NUTRITION_MODE_RECIPE,
+    Ingredient,
+    Recipe,
+)
 
 router = APIRouter()
 templates = Jinja2Templates(directory=str(Path(__file__).resolve().parent.parent / "templates"))
@@ -67,21 +72,44 @@ def _form_str(form, key: str) -> str:
     return str(value).strip()
 
 
+def _parse_list(form, key: str) -> list:
+    values = form.getlist(key)
+    return list(values) if values else []
+
+
 def _parse_ingredients(form) -> list[Ingredient]:
-    names = form.getlist("ingredient_name")
-    amounts = form.getlist("ingredient_amount")
-    units = form.getlist("ingredient_unit")
+    names = _parse_list(form, "ingredient_name")
+    amounts = _parse_list(form, "ingredient_amount")
+    units = _parse_list(form, "ingredient_unit")
+    calories = _parse_list(form, "ingredient_calories_kcal")
+    proteins = _parse_list(form, "ingredient_protein_g")
+    carbs = _parse_list(form, "ingredient_carbohydrates_g")
+    fats = _parse_list(form, "ingredient_fats_g")
+    salts = _parse_list(form, "ingredient_salt_g")
     ingredients: list[Ingredient] = []
-    for name, amount, unit in zip(names, amounts, units):
+    for index, name in enumerate(names):
         name = str(name or "").strip()
         if not name:
             continue
+        amount = amounts[index] if index < len(amounts) else 0
+        unit = units[index] if index < len(units) else "g"
         try:
             amt = float(amount) if amount not in (None, "") else 0.0
         except (TypeError, ValueError):
             amt = 0.0
         unit = str(unit) if unit in UNITS else "g"
-        ingredients.append(Ingredient(name=name, amount=amt, unit=unit))
+        ingredients.append(
+            Ingredient(
+                name=name,
+                amount=amt,
+                unit=unit,
+                calories_kcal=_float_field(calories[index] if index < len(calories) else 0),
+                protein_g=_float_field(proteins[index] if index < len(proteins) else 0),
+                carbohydrates_g=_float_field(carbs[index] if index < len(carbs) else 0),
+                fats_g=_float_field(fats[index] if index < len(fats) else 0),
+                salt_g=_float_field(salts[index] if index < len(salts) else 0),
+            )
+        )
     return ingredients
 
 
@@ -107,9 +135,29 @@ def _save_ingredients(conn, recipe_id: int, ingredients: list[Ingredient]) -> No
     conn.execute("DELETE FROM ingredients WHERE recipe_id = ?", (recipe_id,))
     for ing in ingredients:
         conn.execute(
-            "INSERT INTO ingredients (recipe_id, name, amount, unit) VALUES (?, ?, ?, ?)",
-            (recipe_id, ing.name, ing.amount, ing.unit),
+            """
+            INSERT INTO ingredients (
+                recipe_id, name, amount, unit,
+                calories_kcal, protein_g, carbohydrates_g, fats_g, salt_g
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                recipe_id,
+                ing.name,
+                ing.amount,
+                ing.unit,
+                ing.calories_kcal,
+                ing.protein_g,
+                ing.carbohydrates_g,
+                ing.fats_g,
+                ing.salt_g,
+            ),
         )
+
+
+def _nutrition_mode_from_form(form) -> str:
+    mode = _form_str(form, "nutrition_mode")
+    return NUTRITION_MODE_INGREDIENT if mode == NUTRITION_MODE_INGREDIENT else NUTRITION_MODE_RECIPE
 
 
 def _recipe_from_form(form, recipe_id: int | None = None) -> tuple[Recipe, list[Ingredient]]:
@@ -125,8 +173,11 @@ def _recipe_from_form(form, recipe_id: int | None = None) -> tuple[Recipe, list[
         carbohydrates_g=_float_field(_form_str(form, "carbohydrates_g")),
         fats_g=_float_field(_form_str(form, "fats_g")),
         salt_g=_float_field(_form_str(form, "salt_g")),
+        nutrition_mode=_nutrition_mode_from_form(form),
         ingredients=ingredients or [Ingredient(name="", amount=0, unit="g")],
     )
+    if recipe.uses_ingredient_nutrition:
+        recipe.apply_per_person_nutrition()
     return recipe, ingredients
 
 
@@ -266,8 +317,9 @@ async def admin_recipe_create(request: Request):
                 """
                 INSERT INTO recipes (
                     name, instructions, serves, prep_time_minutes,
-                    calories_kcal, protein_g, carbohydrates_g, fats_g, salt_g
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    calories_kcal, protein_g, carbohydrates_g, fats_g, salt_g,
+                    nutrition_mode
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     recipe.name,
@@ -279,6 +331,7 @@ async def admin_recipe_create(request: Request):
                     recipe.carbohydrates_g,
                     recipe.fats_g,
                     recipe.salt_g,
+                    recipe.nutrition_mode,
                 ),
             )
             _save_ingredients(conn, cur.lastrowid, ingredients)
@@ -335,7 +388,7 @@ async def admin_recipe_update(request: Request, recipe_id: int):
                 UPDATE recipes SET
                     name = ?, instructions = ?, serves = ?, prep_time_minutes = ?,
                     calories_kcal = ?, protein_g = ?, carbohydrates_g = ?, fats_g = ?, salt_g = ?,
-                    updated_at = datetime('now')
+                    nutrition_mode = ?, updated_at = datetime('now')
                 WHERE id = ?
                 """,
                 (
@@ -348,6 +401,7 @@ async def admin_recipe_update(request: Request, recipe_id: int):
                     recipe.carbohydrates_g,
                     recipe.fats_g,
                     recipe.salt_g,
+                    recipe.nutrition_mode,
                     recipe_id,
                 ),
             )
@@ -371,12 +425,18 @@ def admin_recipe_delete(recipe_id: int):
 
 
 @router.get("/admin/ingredients/row", response_class=HTMLResponse)
-def ingredient_row(request: Request):
+def ingredient_row(request: Request, nutrition_mode: str = NUTRITION_MODE_RECIPE):
+    mode = NUTRITION_MODE_INGREDIENT if nutrition_mode == NUTRITION_MODE_INGREDIENT else NUTRITION_MODE_RECIPE
     with db_session() as conn:
         return render(
             request,
             "admin/ingredient_row.html",
-            _ctx(request, conn, ingredient=Ingredient(name="", amount=0, unit="g")),
+            _ctx(
+                request,
+                conn,
+                ingredient=Ingredient(name="", amount=0, unit="g"),
+                recipe=Recipe(name="", nutrition_mode=mode),
+            ),
         )
 
 

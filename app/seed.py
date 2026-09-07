@@ -137,8 +137,9 @@ def seed_if_empty() -> None:
                 """
                 INSERT INTO recipes (
                     name, instructions, serves, prep_time_minutes,
-                    calories_kcal, protein_g, carbohydrates_g, fats_g, salt_g
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    calories_kcal, protein_g, carbohydrates_g, fats_g, salt_g,
+                    nutrition_mode
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     recipe["name"],
@@ -150,6 +151,7 @@ def seed_if_empty() -> None:
                     recipe["carbohydrates_g"],
                     recipe["fats_g"],
                     recipe["salt_g"],
+                    recipe.get("nutrition_mode", "recipe"),
                 ),
             )
             recipe_id = cur.lastrowid

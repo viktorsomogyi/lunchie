@@ -75,15 +75,41 @@ Replace `image: .` / `build: .` in `docker-compose.yml` with that image if you w
 | GET | `/api/recipes` | All recipes |
 | GET | `/api/recipes/{id}` | One recipe |
 
+## HTTPS / reverse proxy
+
+Lunchie listens on HTTP `:7077`. TLS belongs on your reverse proxy (Traefik, Caddy, nginx), not in this image.
+
+Put hostnames, cert resolvers, and Docker networks in **your** compose file (for example a Home Assistant stack), not in this repo. Example Traefik labels:
+
+```yaml
+lunchie:
+  image: ghcr.io/<owner>/lunchie:latest
+  environment:
+    DATABASE_PATH: /data/lunchie.db
+  volumes:
+    - lunchie-data:/data
+  networks:
+    - <your-proxy-network>
+  labels:
+    - "traefik.enable=true"
+    - "traefik.http.routers.lunchie.rule=Host(`lunchie.example.com`)"
+    - "traefik.http.routers.lunchie.entrypoints=websecure"
+    - "traefik.http.routers.lunchie.tls=true"
+    - "traefik.http.routers.lunchie.tls.certresolver=<resolver>"
+    - "traefik.http.services.lunchie.loadbalancer.server.port=7077"
+```
+
+Replace `lunchie.example.com`, `<resolver>`, and the network with your values.
+
 ## Home Assistant
 
-Replace `<host>` with your machine’s LAN IP (not `localhost` if HA runs elsewhere).
+Use HTTPS if the dashboard is HTTPS (iframe mixed-content). Otherwise `http://<host>:7077/` is fine.
 
 ### Iframe card
 
 ```yaml
 type: iframe
-url: http://<host>:7077/
+url: https://lunchie.example.com/
 aspect_ratio: 100%
 ```
 
@@ -91,7 +117,7 @@ aspect_ratio: 100%
 
 ```yaml
 rest:
-  - resource: http://<host>:7077/api/menu/today
+  - resource: https://lunchie.example.com/api/menu/today
     scan_interval: 300
     sensor:
       - name: Lunchie today
@@ -112,7 +138,7 @@ rest:
 ```yaml
 rest_command:
   lunchie_regenerate:
-    url: http://<host>:7077/api/menu/regenerate
+    url: https://lunchie.example.com/api/menu/regenerate
     method: POST
 ```
 

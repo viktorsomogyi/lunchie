@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS recipes (
     carbohydrates_g REAL NOT NULL DEFAULT 0,
     fats_g REAL NOT NULL DEFAULT 0,
     salt_g REAL NOT NULL DEFAULT 0,
+    nutrition_mode TEXT NOT NULL DEFAULT 'recipe',
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
@@ -32,7 +33,12 @@ CREATE TABLE IF NOT EXISTS ingredients (
     recipe_id INTEGER NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
     amount REAL NOT NULL DEFAULT 0,
-    unit TEXT NOT NULL DEFAULT 'g'
+    unit TEXT NOT NULL DEFAULT 'g',
+    calories_kcal REAL NOT NULL DEFAULT 0,
+    protein_g REAL NOT NULL DEFAULT 0,
+    carbohydrates_g REAL NOT NULL DEFAULT 0,
+    fats_g REAL NOT NULL DEFAULT 0,
+    salt_g REAL NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS settings (
@@ -93,10 +99,25 @@ def db_session():
         conn.close()
 
 
+def _table_columns(conn: sqlite3.Connection, table: str) -> set[str]:
+    return {row[1] for row in conn.execute(f"PRAGMA table_info({table})")}
+
+
+def _migrate(conn: sqlite3.Connection) -> None:
+    recipe_cols = _table_columns(conn, "recipes")
+    if "nutrition_mode" not in recipe_cols:
+        conn.execute("ALTER TABLE recipes ADD COLUMN nutrition_mode TEXT NOT NULL DEFAULT 'recipe'")
+    ingredient_cols = _table_columns(conn, "ingredients")
+    for column in ("calories_kcal", "protein_g", "carbohydrates_g", "fats_g", "salt_g"):
+        if column not in ingredient_cols:
+            conn.execute(f"ALTER TABLE ingredients ADD COLUMN {column} REAL NOT NULL DEFAULT 0")
+
+
 def init_db() -> None:
     with db_session() as conn:
         conn.executescript(SCHEMA)
         conn.execute("PRAGMA foreign_keys = ON")
+        _migrate(conn)
         for key, value in DEFAULT_SETTINGS.items():
             conn.execute(
                 "INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)",

@@ -119,3 +119,35 @@ def test_day_recipe_picker_and_assign(client):
 
     assert client.get("/menu/days/9/picker").status_code == 404
     assert client.post("/menu/days/0", data={"recipe_id": 9999}).status_code == 404
+
+
+def test_ingredient_nutrition_totals_per_serving(client):
+    form = {
+        "name": "Gulyás",
+        "serves": "2",
+        "prep_time_minutes": "30",
+        "nutrition_mode": "ingredient",
+        "instructions": "Főzd.",
+        "ingredient_name": ["hús", "hagyma"],
+        "ingredient_amount": ["200", "50"],
+        "ingredient_unit": ["g", "g"],
+        "ingredient_calories_kcal": ["400", "40"],
+        "ingredient_protein_g": ["40", "2"],
+        "ingredient_carbohydrates_g": ["0", "8"],
+        "ingredient_fats_g": ["20", "0"],
+        "ingredient_salt_g": ["1", "0.2"],
+    }
+    created = client.post("/admin/recipes", data=form, follow_redirects=False)
+    assert created.status_code == 303
+    recipe = client.get("/api/recipes").json()[0]
+    assert recipe["nutrition_mode"] == "ingredient"
+    assert recipe["calories_kcal"] == 220
+    assert recipe["protein_g"] == 21
+    assert recipe["carbohydrates_g"] == 4
+    assert recipe["fats_g"] == 10
+    assert recipe["salt_g"] == 0.6
+    assert recipe["ingredients"][0]["calories_kcal"] == 400
+
+    week = client.get("/")
+    assert "220 kcal" in week.text
+    assert "Serves 2" in week.text
