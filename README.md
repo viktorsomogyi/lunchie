@@ -46,6 +46,24 @@ pip install -r requirements-dev.txt
 pytest
 ```
 
+## Releases
+
+Push a `v*.*.*` tag, or run **Actions → Release → Run workflow** with a version like `1.0.0`. That creates a GitHub Release and publishes:
+
+```text
+ghcr.io/<owner>/lunchie:v1.0.0
+ghcr.io/<owner>/lunchie:1.0.0
+ghcr.io/<owner>/lunchie:latest
+```
+
+The package must be public (or you must be logged in) to pull:
+
+```bash
+docker pull ghcr.io/<owner>/lunchie:latest
+```
+
+Replace `image: .` / `build: .` in `docker-compose.yml` with that image if you want to run a released build. The package visibility is under **Repo → Packages**. First publish may stay private until you change it.
+
 ## API
 
 | Method | Path | Description |
