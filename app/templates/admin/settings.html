@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}{{ t('admin.settings_title') }} — {{ t('app.name') }}{% endblock %}
+{% block content %}
+<section class="week-header">
+  <h1>{{ t('admin.settings_title') }}</h1>
+  <a href="/admin/recipes" role="button" class="outline">{{ t('nav.recipes') }}</a>
+</section>
+
+{% if saved %}
+<p class="success">{{ t('settings.saved') }}</p>
+{% endif %}
+
+<form method="post" action="/admin/settings">
+  <fieldset>
+    <legend>{{ t('settings.week_length') }}</legend>
+    <label>
+      <input type="radio" name="week_length" value="5" {% if week_length == '5' %}checked{% endif %}>
+      {{ t('settings.week_length_5') }}
+    </label>
+    <label>
+      <input type="radio" name="week_length" value="7" {% if week_length == '7' %}checked{% endif %}>
+      {{ t('settings.week_length_7') }}
+    </label>
+    <p class="muted small">{{ t('settings.week_length_hint') }}</p>
+  </fieldset>
+
+  <fieldset>
+    <legend>{{ t('settings.language') }}</legend>
+    <label>
+      <input type="radio" name="ui_language" value="en" {% if ui_language == 'en' %}checked{% endif %}>
+      {{ t('settings.language_en') }}
+    </label>
+    <label>
+      <input type="radio" name="ui_language" value="hu" {% if ui_language == 'hu' %}checked{% endif %}>
+      {{ t('settings.language_hu') }}
+    </label>
+  </fieldset>
+
+  <button type="submit">{{ t('settings.save') }}</button>
+</form>
+{% endblock %}

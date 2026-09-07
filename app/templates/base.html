@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ t('app.name') }}{% endblock %}</title>
+  <link rel="stylesheet" href="/static/pico.min.css">
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/htmx.min.js" defer></script>
+</head>
+<body>
+  <header class="container">
+    <nav>
+      <ul>
+        <li><strong><a href="/" class="brand">{{ t('app.name') }}</a></strong></li>
+      </ul>
+      <ul>
+        <li><a href="/" {% if request.url.path == '/' %}aria-current="page"{% endif %}>{{ t('nav.menu') }}</a></li>
+        <li><a href="/admin/recipes" {% if request.url.path.startswith('/admin') %}aria-current="page"{% endif %}>{{ t('nav.admin') }}</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+  <div id="modal-root"></div>
+</body>
+</html>

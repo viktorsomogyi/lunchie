@@ -1,0 +1,10 @@
+<dialog id="recipe-dialog" open class="recipe-dialog">
+  <article>
+    <header>
+      <button class="close" type="button" aria-label="{{ t('common.close') }}"
+              onclick="document.getElementById('modal-root').innerHTML=''">×</button>
+      <h2>{{ recipe.name }}</h2>
+    </header>
+    {% include "user/recipe_body.html" %}
+  </article>
+</dialog>

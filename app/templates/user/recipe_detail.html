@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}{{ recipe.name }} — {{ t('app.name') }}{% endblock %}
+{% block content %}
+<p><a href="/">← {{ t('recipe.back') }}</a></p>
+{% include "user/recipe_body.html" %}
+{% endblock %}

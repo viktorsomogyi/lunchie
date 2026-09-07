@@ -1,0 +1,96 @@
+{
+  "app": {
+    "name": "Lunchie",
+    "tagline": "Weekly lunch menus"
+  },
+  "nav": {
+    "menu": "Menu",
+    "admin": "Admin",
+    "recipes": "Recipes",
+    "settings": "Settings",
+    "new_recipe": "New recipe"
+  },
+  "week": {
+    "title": "Weekly menu",
+    "of": "Week of {date}",
+    "regenerate": "Regenerate week",
+    "regenerate_confirm": "Replace this week's menu with a new random selection?",
+    "empty": "No recipes yet. Add some in Admin to generate a menu.",
+    "empty_menu": "No menu for this week.",
+    "no_recipe": "No recipe",
+    "today": "Today",
+    "generated": "Generated {when}",
+    "change": "Change",
+    "choose_recipe": "Choose a recipe",
+    "search": "Search recipes",
+    "search_placeholder": "Search by name…",
+    "no_matches": "No matching recipes.",
+    "current": "Current",
+    "select": "Select"
+  },
+  "days": {
+    "0": "Monday",
+    "1": "Tuesday",
+    "2": "Wednesday",
+    "3": "Thursday",
+    "4": "Friday",
+    "5": "Saturday",
+    "6": "Sunday"
+  },
+  "recipe": {
+    "title": "Recipe",
+    "name": "Name",
+    "serves": "Serves",
+    "serves_n": "Serves {n}",
+    "prep_time": "Prep time",
+    "minutes": "{n} min",
+    "instructions": "Instructions",
+    "ingredients": "Ingredients",
+    "nutrition": "Nutrition (per person)",
+    "calories": "Calories",
+    "protein": "Protein",
+    "carbs": "Carbohydrates",
+    "fats": "Fats",
+    "salt": "Salt",
+    "kcal": "{n} kcal",
+    "grams": "{n} g",
+    "per_person": "per person",
+    "amount": "Amount",
+    "unit": "Unit",
+    "ingredient_name": "Ingredient",
+    "add_ingredient": "Add ingredient",
+    "remove": "Remove",
+    "save": "Save",
+    "create": "Create recipe",
+    "edit": "Edit recipe",
+    "delete": "Delete",
+    "delete_confirm": "Delete this recipe?",
+    "back": "Back",
+    "actions": "Actions",
+    "none": "No recipes yet.",
+    "view": "View",
+    "duplicate": "A recipe with this name already exists."
+  },
+  "admin": {
+    "title": "Admin",
+    "recipes_title": "Recipes",
+    "settings_title": "Settings"
+  },
+  "settings": {
+    "week_length": "Week length",
+    "week_length_5": "5 days (Mon–Fri)",
+    "week_length_7": "7 days (Mon–Sun)",
+    "week_length_hint": "Changing length does not regenerate the current menu automatically.",
+    "language": "UI language",
+    "language_en": "English",
+    "language_hu": "Hungarian",
+    "save": "Save settings",
+    "saved": "Settings saved."
+  },
+  "common": {
+    "cancel": "Cancel",
+    "close": "Close",
+    "error": "Something went wrong.",
+    "required": "Required"
+  }
+}

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}{% if editing %}{{ t('recipe.edit') }}{% else %}{{ t('recipe.create') }}{% endif %} — {{ t('app.name') }}{% endblock %}
+{% block content %}
+<p><a href="/admin/recipes">← {{ t('recipe.back') }}</a></p>
+<h1>{% if editing %}{{ t('recipe.edit') }}{% else %}{{ t('recipe.create') }}{% endif %}</h1>
+
+{% if error == 'name' %}
+<p class="error">{{ t('recipe.name') }}: {{ t('common.required') }}</p>
+{% elif error == 'duplicate' %}
+<p class="error">{{ t('recipe.duplicate') }}</p>
+{% endif %}
+
+<form method="post" action="{% if editing %}/admin/recipes/{{ recipe.id }}{% else %}/admin/recipes{% endif %}">
+  <label>
+    {{ t('recipe.name') }}
+    <input type="text" name="name" required value="{{ recipe.name }}">
+  </label>
+
+  <div class="form-grid">
+    <label>
+      {{ t('recipe.serves') }}
+      <input type="number" name="serves" min="1" step="1" required value="{{ recipe.serves }}">
+    </label>
+    <label>
+      {{ t('recipe.prep_time') }} (min)
+      <input type="number" name="prep_time_minutes" min="0" step="1" value="{{ recipe.prep_time_minutes }}">
+    </label>
+  </div>
+
+  <fieldset>
+    <legend>{{ t('recipe.nutrition') }}</legend>
+    <div class="form-grid nutrition-fields">
+      <label>{{ t('recipe.calories') }} (kcal)
+        <input type="number" name="calories_kcal" min="0" step="any" value="{{ recipe.calories_kcal|num }}">
+      </label>
+      <label>{{ t('recipe.protein') }} (g)
+        <input type="number" name="protein_g" min="0" step="any" value="{{ recipe.protein_g|num }}">
+      </label>
+      <label>{{ t('recipe.carbs') }} (g)
+        <input type="number" name="carbohydrates_g" min="0" step="any" value="{{ recipe.carbohydrates_g|num }}">
+      </label>
+      <label>{{ t('recipe.fats') }} (g)
+        <input type="number" name="fats_g" min="0" step="any" value="{{ recipe.fats_g|num }}">
+      </label>
+      <label>{{ t('recipe.salt') }} (g)
+        <input type="number" name="salt_g" min="0" step="any" value="{{ recipe.salt_g|num }}">
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>{{ t('recipe.ingredients') }} <span class="muted">({{ t('recipe.per_person') }})</span></legend>
+    <div id="ingredients">
+      {% for ingredient in recipe.ingredients %}
+        {% include "admin/ingredient_row.html" %}
+      {% endfor %}
+    </div>
+    <button type="button" class="outline"
+            hx-get="/admin/ingredients/row"
+            hx-target="#ingredients"
+            hx-swap="beforeend">
+      {{ t('recipe.add_ingredient') }}
+    </button>
+  </fieldset>
+
+  <label>
+    {{ t('recipe.instructions') }}
+    <textarea name="instructions" rows="10">{{ recipe.instructions }}</textarea>
+  </label>
+
+  <div class="form-actions">
+    <a href="/admin/recipes" role="button" class="outline secondary">{{ t('common.cancel') }}</a>
+    <button type="submit">{% if editing %}{{ t('recipe.save') }}{% else %}{{ t('recipe.create') }}{% endif %}</button>
+  </div>
+</form>
+{% endblock %}

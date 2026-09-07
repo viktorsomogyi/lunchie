@@ -1,0 +1,26 @@
+<dialog id="recipe-dialog" open class="recipe-dialog picker-dialog">
+  <article>
+    <header>
+      <button class="close" type="button" aria-label="{{ t('common.close') }}"
+              onclick="document.getElementById('modal-root').innerHTML=''">×</button>
+      <h2>{{ t('week.choose_recipe') }}</h2>
+      <p class="muted">{{ day_name }}</p>
+    </header>
+    <label>
+      {{ t('week.search') }}
+      <input
+        type="search"
+        name="q"
+        value="{{ query }}"
+        placeholder="{{ t('week.search_placeholder') }}"
+        autofocus
+        hx-get="/menu/days/{{ day_index }}/picker/results"
+        hx-target="#picker-results"
+        hx-trigger="input changed delay:200ms, search"
+        hx-include="this">
+    </label>
+    <div id="picker-results">
+      {% include "user/recipe_picker_results.html" %}
+    </div>
+  </article>
+</dialog>

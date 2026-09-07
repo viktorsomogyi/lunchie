@@ -1,0 +1,10 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+data/
+*.db
+.env
+.pytest_cache/
+.coverage
+nohup.out

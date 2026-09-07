@@ -1,0 +1,96 @@
+{
+  "app": {
+    "name": "Lunchie",
+    "tagline": "Heti ebédmenük"
+  },
+  "nav": {
+    "menu": "Menü",
+    "admin": "Admin",
+    "recipes": "Receptek",
+    "settings": "Beállítások",
+    "new_recipe": "Új recept"
+  },
+  "week": {
+    "title": "Heti menü",
+    "of": "{date} hete",
+    "regenerate": "Hét újragenerálása",
+    "regenerate_confirm": "Lecseréled a heti menüt egy új véletlen választásra?",
+    "empty": "Még nincsenek receptek. Adj hozzá néhányat az Adminban a menü generálásához.",
+    "empty_menu": "Nincs menü erre a hétre.",
+    "no_recipe": "Nincs recept",
+    "today": "Ma",
+    "generated": "Generálva: {when}",
+    "change": "Csere",
+    "choose_recipe": "Válassz receptet",
+    "search": "Receptek keresése",
+    "search_placeholder": "Keresés név szerint…",
+    "no_matches": "Nincs találat.",
+    "current": "Jelenlegi",
+    "select": "Kiválaszt"
+  },
+  "days": {
+    "0": "Hétfő",
+    "1": "Kedd",
+    "2": "Szerda",
+    "3": "Csütörtök",
+    "4": "Péntek",
+    "5": "Szombat",
+    "6": "Vasárnap"
+  },
+  "recipe": {
+    "title": "Recept",
+    "name": "Név",
+    "serves": "Adag",
+    "serves_n": "{n} főre",
+    "prep_time": "Elkészítési idő",
+    "minutes": "{n} perc",
+    "instructions": "Elkészítés",
+    "ingredients": "Hozzávalók",
+    "nutrition": "Tápérték (fejenként)",
+    "calories": "Kalória",
+    "protein": "Fehérje",
+    "carbs": "Szénhidrát",
+    "fats": "Zsír",
+    "salt": "Só",
+    "kcal": "{n} kcal",
+    "grams": "{n} g",
+    "per_person": "fejenként",
+    "amount": "Mennyiség",
+    "unit": "Egység",
+    "ingredient_name": "Hozzávaló",
+    "add_ingredient": "Hozzávaló hozzáadása",
+    "remove": "Törlés",
+    "save": "Mentés",
+    "create": "Recept létrehozása",
+    "edit": "Recept szerkesztése",
+    "delete": "Törlés",
+    "delete_confirm": "Törlöd ezt a receptet?",
+    "back": "Vissza",
+    "actions": "Műveletek",
+    "none": "Még nincsenek receptek.",
+    "view": "Megnyitás",
+    "duplicate": "Már van recept ezzel a névvel."
+  },
+  "admin": {
+    "title": "Admin",
+    "recipes_title": "Receptek",
+    "settings_title": "Beállítások"
+  },
+  "settings": {
+    "week_length": "Hét hossza",
+    "week_length_5": "5 nap (H–P)",
+    "week_length_7": "7 nap (H–V)",
+    "week_length_hint": "A hossz változtatása nem generálja újra automatikusan a menüt.",
+    "language": "Felület nyelve",
+    "language_en": "Angol",
+    "language_hu": "Magyar",
+    "save": "Beállítások mentése",
+    "saved": "Beállítások elmentve."
+  },
+  "common": {
+    "cancel": "Mégse",
+    "close": "Bezárás",
+    "error": "Valami hiba történt.",
+    "required": "Kötelező"
+  }
+}

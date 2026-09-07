@@ -1,0 +1,13 @@
+<div class="ingredient-row">
+  <input type="text" name="ingredient_name" placeholder="{{ t('recipe.ingredient_name') }}" value="{{ ingredient.name }}">
+  <input type="number" name="ingredient_amount" min="0" step="any" placeholder="{{ t('recipe.amount') }}" value="{{ ingredient.amount|num }}">
+  <select name="ingredient_unit">
+    {% for u in units %}
+    <option value="{{ u }}" {% if ingredient.unit == u %}selected{% endif %}>{{ u }}</option>
+    {% endfor %}
+  </select>
+  <button type="button" class="outline secondary small-btn"
+          onclick="this.closest('.ingredient-row').remove()">
+    {{ t('recipe.remove') }}
+  </button>
+</div>

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}{{ t('admin.recipes_title') }} — {{ t('app.name') }}{% endblock %}
+{% block content %}
+<section class="week-header">
+  <h1>{{ t('admin.recipes_title') }}</h1>
+  <div class="admin-actions">
+    <a href="/admin/settings" role="button" class="outline">{{ t('nav.settings') }}</a>
+    <a href="/admin/recipes/new" role="button">{{ t('nav.new_recipe') }}</a>
+  </div>
+</section>
+
+{% if not recipes %}
+<article class="empty-state">
+  <p>{{ t('recipe.none') }}</p>
+  <p><a href="/admin/recipes/new">{{ t('nav.new_recipe') }}</a></p>
+</article>
+{% else %}
+<figure>
+  <table>
+    <thead>
+      <tr>
+        <th>{{ t('recipe.name') }}</th>
+        <th>{{ t('recipe.prep_time') }}</th>
+        <th>{{ t('recipe.calories') }}</th>
+        <th>{{ t('recipe.serves') }}</th>
+        <th>{{ t('recipe.actions') }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for recipe in recipes %}
+      <tr>
+        <td><a href="/recipes/{{ recipe.id }}">{{ recipe.name }}</a></td>
+        <td>{{ t('recipe.minutes', n=recipe.prep_time_minutes) }}</td>
+        <td>{{ t('recipe.kcal', n=recipe.calories_kcal|num) }}</td>
+        <td>{{ recipe.serves }}</td>
+        <td class="row-actions">
+          <a href="/admin/recipes/{{ recipe.id }}/edit">{{ t('recipe.edit') }}</a>
+          <form method="post" action="/admin/recipes/{{ recipe.id }}/delete"
+                onsubmit="return confirm({{ t('recipe.delete_confirm')|tojson }});">
+            <button type="submit" class="outline secondary small-btn">{{ t('recipe.delete') }}</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</figure>
+{% endif %}
+{% endblock %}

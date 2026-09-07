@@ -1,0 +1,13 @@
+services:
+  lunchie:
+    build: .
+    ports:
+      - "7077:7077"
+    volumes:
+      - lunchie-data:/data
+    restart: unless-stopped
+    environment:
+      DATABASE_PATH: /data/lunchie.db
+
+volumes:
+  lunchie-data:

@@ -1,0 +1,25 @@
+{% if not recipes %}
+<p class="muted">{{ t('week.no_matches') }}</p>
+{% else %}
+<ul class="picker-list">
+  {% for recipe in recipes %}
+  <li class="picker-item {% if recipe.id == current_recipe_id %}is-current{% endif %}">
+    <div>
+      <strong>{{ recipe.name }}</strong>
+      {% if recipe.id == current_recipe_id %}<span class="badge">{{ t('week.current') }}</span>{% endif %}
+      <div class="muted small">
+        {{ t('recipe.kcal', n=recipe.calories_kcal|num) }} ·
+        {{ t('recipe.minutes', n=recipe.prep_time_minutes) }} ·
+        {{ t('recipe.serves_n', n=recipe.serves) }}
+      </div>
+    </div>
+    <form method="post" action="/menu/days/{{ day_index }}">
+      <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
+      <button type="submit" class="small-btn {% if recipe.id == current_recipe_id %}outline{% endif %}">
+        {{ t('week.select') }}
+      </button>
+    </form>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}

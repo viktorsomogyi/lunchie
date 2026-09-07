@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}{{ t('week.title') }} — {{ t('app.name') }}{% endblock %}
+{% block content %}
+<section class="week-header">
+  <div>
+    <h1>{{ t('week.title') }}</h1>
+    {% if menu %}
+    <p class="muted">{{ t('week.of', date=menu.week_start) }}</p>
+    {% endif %}
+  </div>
+  {% if has_recipes %}
+  <form method="post" action="/menu/regenerate"
+        onsubmit="return confirm({{ t('week.regenerate_confirm')|tojson }});">
+    <button type="submit">{{ t('week.regenerate') }}</button>
+  </form>
+  {% endif %}
+</section>
+
+{% if not has_recipes %}
+<article class="empty-state">
+  <p>{{ t('week.empty') }}</p>
+  <p><a href="/admin/recipes/new">{{ t('nav.new_recipe') }}</a></p>
+</article>
+{% elif not menu %}
+<article class="empty-state">
+  <p>{{ t('week.empty_menu') }}</p>
+</article>
+{% else %}
+<div class="day-grid">
+  {% for day in menu.days %}
+  {% set recipe = day.recipe %}
+  <article class="day-card {% if day.date == today %}is-today{% endif %}">
+    <header>
+      <div class="day-title">
+        <strong>{{ t('days.' ~ day.day_index|string) }}</strong>
+        {% if day.date == today %}<span class="badge">{{ t('week.today') }}</span>{% endif %}
+      </div>
+      <div class="muted small">{{ day.date }}</div>
+    </header>
+    {% if recipe %}
+    <h3>{{ recipe.name }}</h3>
+    <ul class="meta">
+      <li>{{ t('recipe.kcal', n=recipe.calories_kcal|num) }}</li>
+      <li>{{ t('recipe.minutes', n=recipe.prep_time_minutes) }}</li>
+      <li>{{ t('recipe.serves_n', n=recipe.serves) }}</li>
+    </ul>
+    {% else %}
+    <p class="muted">{{ t('week.no_recipe') }}</p>
+    {% endif %}
+    <div class="card-actions">
+      {% if recipe %}
+      <button
+        class="outline"
+        hx-get="/recipes/{{ recipe.id }}"
+        hx-target="#modal-root"
+        hx-swap="innerHTML">
+        {{ t('recipe.view') }}
+      </button>
+      {% endif %}
+      <button
+        class="outline secondary"
+        hx-get="/menu/days/{{ day.day_index }}/picker"
+        hx-target="#modal-root"
+        hx-swap="innerHTML">
+        {{ t('week.change') }}
+      </button>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

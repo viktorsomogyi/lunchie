@@ -1,0 +1,28 @@
+<ul class="meta">
+  <li>{{ t('recipe.serves_n', n=recipe.serves) }}</li>
+  <li>{{ t('recipe.minutes', n=recipe.prep_time_minutes) }}</li>
+  <li>{{ t('recipe.kcal', n=recipe.calories_kcal|num) }} <span class="muted">{{ t('recipe.per_person') }}</span></li>
+</ul>
+
+<h3>{{ t('recipe.nutrition') }}</h3>
+<div class="nutrition-grid">
+  <div><span class="label">{{ t('recipe.calories') }}</span><strong>{{ recipe.calories_kcal|num }} kcal</strong></div>
+  <div><span class="label">{{ t('recipe.protein') }}</span><strong>{{ recipe.protein_g|num }} g</strong></div>
+  <div><span class="label">{{ t('recipe.carbs') }}</span><strong>{{ recipe.carbohydrates_g|num }} g</strong></div>
+  <div><span class="label">{{ t('recipe.fats') }}</span><strong>{{ recipe.fats_g|num }} g</strong></div>
+  <div><span class="label">{{ t('recipe.salt') }}</span><strong>{{ recipe.salt_g|num }} g</strong></div>
+</div>
+
+<h3>{{ t('recipe.ingredients') }} <span class="muted small">({{ t('recipe.per_person') }})</span></h3>
+{% if recipe.ingredients %}
+<ul class="ingredients">
+  {% for ing in recipe.ingredients %}
+  <li>{{ ing.name }} — {{ ing.amount|num }} {{ ing.unit }}</li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="muted">—</p>
+{% endif %}
+
+<h3>{{ t('recipe.instructions') }}</h3>
+<pre class="instructions">{{ recipe.instructions }}</pre>
