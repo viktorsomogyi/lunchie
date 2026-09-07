@@ -7,8 +7,10 @@
     "menu": "Menü",
     "admin": "Admin",
     "recipes": "Receptek",
+    "food_items": "Hozzávalók",
     "settings": "Beállítások",
-    "new_recipe": "Új recept"
+    "new_recipe": "Új recept",
+    "new_food_item": "Új hozzávaló"
   },
   "week": {
     "title": "Heti menü",
@@ -49,8 +51,10 @@
     "nutrition": "Tápérték (fejenként)",
     "nutrition_mode": "Tápérték forrása",
     "nutrition_mode_recipe": "Egész recept (fejenként)",
-    "nutrition_mode_ingredient": "Hozzávalónként (a recept összesített értékei)",
-    "nutrition_mode_hint": "A kártyákon mindig a fejenkénti érték jelenik meg. A hozzávalók összegét az adagszámmal osztjuk.",
+    "nutrition_mode_ingredient": "Hozzávalókból (katalógus × mennyiség)",
+    "nutrition_mode_hint": "A kártyákon mindig a fejenkénti érték jelenik meg. Hozzávaló módban a katalógus tápértékét a mennyiséggel skálázzuk, majd az adagszámmal osztjuk.",
+    "choose_ingredient": "Válassz hozzávalót…",
+    "no_food_items": "Még nincsenek hozzávalók a katalógusban.",
     "calories": "Kalória",
     "protein": "Fehérje",
     "carbs": "Szénhidrát",
@@ -79,7 +83,24 @@
   "admin": {
     "title": "Admin",
     "recipes_title": "Receptek",
+    "food_items_title": "Hozzávalók",
     "settings_title": "Beállítások"
+  },
+  "food": {
+    "name": "Név",
+    "per": "Alap",
+    "base_amount": "Alap mennyiség",
+    "base_unit": "Alap egység",
+    "nutrition_basis": "Tápérték alapja",
+    "nutrition_basis_hint": "Add meg a tápértéket az alap mennyiségre (pl. 465 kcal / 100 g).",
+    "nutrition_for_base": "Tápérték az alap mennyiségre",
+    "create": "Hozzávaló létrehozása",
+    "edit": "Hozzávaló szerkesztése",
+    "none": "Még nincsenek hozzávalók.",
+    "duplicate": "Már van hozzávaló ezzel a névvel.",
+    "delete_confirm": "Törlöd ezt a hozzávalót?",
+    "in_use": "Nem törölhető: a hozzávaló szerepel egy receptben.",
+    "base_amount_error": "Az alap mennyiségnek nullánál nagyobbnak kell lennie."
   },
   "settings": {
     "week_length": "Hét hossza",

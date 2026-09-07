@@ -7,8 +7,10 @@
     "menu": "Menu",
     "admin": "Admin",
     "recipes": "Recipes",
+    "food_items": "Ingredients",
     "settings": "Settings",
-    "new_recipe": "New recipe"
+    "new_recipe": "New recipe",
+    "new_food_item": "New ingredient"
   },
   "week": {
     "title": "Weekly menu",
@@ -49,8 +51,10 @@
     "nutrition": "Nutrition (per person)",
     "nutrition_mode": "Nutrition source",
     "nutrition_mode_recipe": "Whole recipe (per person)",
-    "nutrition_mode_ingredient": "Per ingredient (totals for the recipe)",
-    "nutrition_mode_hint": "Cards always show per-person values. Ingredient totals are divided by servings.",
+    "nutrition_mode_ingredient": "From ingredients (catalog densities × amounts)",
+    "nutrition_mode_hint": "Cards always show per-person values. Ingredient mode scales catalog nutrition by amount, then divides by servings.",
+    "choose_ingredient": "Choose ingredient…",
+    "no_food_items": "No ingredients in the catalog yet.",
     "calories": "Calories",
     "protein": "Protein",
     "carbs": "Carbohydrates",
@@ -79,7 +83,24 @@
   "admin": {
     "title": "Admin",
     "recipes_title": "Recipes",
+    "food_items_title": "Ingredients",
     "settings_title": "Settings"
+  },
+  "food": {
+    "name": "Name",
+    "per": "Per",
+    "base_amount": "Base amount",
+    "base_unit": "Base unit",
+    "nutrition_basis": "Nutrition basis",
+    "nutrition_basis_hint": "Enter nutrition for the base amount (e.g. 465 kcal per 100 g).",
+    "nutrition_for_base": "Nutrition for base amount",
+    "create": "Create ingredient",
+    "edit": "Edit ingredient",
+    "none": "No ingredients yet.",
+    "duplicate": "An ingredient with this name already exists.",
+    "delete_confirm": "Delete this ingredient?",
+    "in_use": "Cannot delete: this ingredient is used in a recipe.",
+    "base_amount_error": "Base amount must be greater than zero."
   },
   "settings": {
     "week_length": "Week length",

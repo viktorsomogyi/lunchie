@@ -29,18 +29,27 @@ CREATE TABLE IF NOT EXISTS recipes (
     updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
-CREATE TABLE IF NOT EXISTS ingredients (
+CREATE TABLE IF NOT EXISTS food_items (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    recipe_id INTEGER NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,
-    name TEXT NOT NULL,
-    amount REAL NOT NULL DEFAULT 0,
-    unit TEXT NOT NULL DEFAULT 'g',
+    name TEXT NOT NULL UNIQUE COLLATE NOCASE,
+    base_amount REAL NOT NULL DEFAULT 100 CHECK (base_amount > 0),
+    base_unit TEXT NOT NULL DEFAULT 'g',
     calories_kcal REAL NOT NULL DEFAULT 0,
     protein_g REAL NOT NULL DEFAULT 0,
     carbohydrates_g REAL NOT NULL DEFAULT 0,
     fats_g REAL NOT NULL DEFAULT 0,
     salt_g REAL NOT NULL DEFAULT 0,
-    fiber_g REAL NOT NULL DEFAULT 0
+    fiber_g REAL NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS recipe_items (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    recipe_id INTEGER NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,
+    food_item_id INTEGER NOT NULL REFERENCES food_items(id),
+    amount REAL NOT NULL DEFAULT 0,
+    unit TEXT NOT NULL DEFAULT 'g'
 );
 
 CREATE TABLE IF NOT EXISTS settings (
@@ -62,7 +71,8 @@ CREATE TABLE IF NOT EXISTS menu_items (
     UNIQUE (weekly_menu_id, day_index)
 );
 
-CREATE INDEX IF NOT EXISTS idx_ingredients_recipe ON ingredients(recipe_id);
+CREATE INDEX IF NOT EXISTS idx_recipe_items_recipe ON recipe_items(recipe_id);
+CREATE INDEX IF NOT EXISTS idx_recipe_items_food ON recipe_items(food_item_id);
 CREATE INDEX IF NOT EXISTS idx_menu_items_menu ON menu_items(weekly_menu_id);
 """
 
@@ -105,16 +115,28 @@ def _table_columns(conn: sqlite3.Connection, table: str) -> set[str]:
     return {row[1] for row in conn.execute(f"PRAGMA table_info({table})")}
 
 
+def _table_exists(conn: sqlite3.Connection, table: str) -> bool:
+    row = conn.execute(
+        "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?",
+        (table,),
+    ).fetchone()
+    return row is not None
+
+
 def _migrate(conn: sqlite3.Connection) -> None:
     recipe_cols = _table_columns(conn, "recipes")
     if "nutrition_mode" not in recipe_cols:
         conn.execute("ALTER TABLE recipes ADD COLUMN nutrition_mode TEXT NOT NULL DEFAULT 'recipe'")
     if "fiber_g" not in recipe_cols:
         conn.execute("ALTER TABLE recipes ADD COLUMN fiber_g REAL NOT NULL DEFAULT 0")
-    ingredient_cols = _table_columns(conn, "ingredients")
-    for column in ("calories_kcal", "protein_g", "carbohydrates_g", "fats_g", "salt_g", "fiber_g"):
-        if column not in ingredient_cols:
-            conn.execute(f"ALTER TABLE ingredients ADD COLUMN {column} REAL NOT NULL DEFAULT 0")
+
+    # Legacy per-recipe ingredients table is replaced by food_items + recipe_items.
+    if _table_exists(conn, "ingredients") and not _table_exists(conn, "recipe_items"):
+        # recipe_items is created by SCHEMA; if we got here schema ran first.
+        pass
+    if _table_exists(conn, "ingredients"):
+        # Drop old free-text ingredients once catalog tables exist.
+        conn.execute("DROP TABLE IF EXISTS ingredients")
 
 
 def init_db() -> None:

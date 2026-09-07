@@ -2,7 +2,14 @@ import random
 from datetime import date, timedelta
 
 from app.db import get_setting
-from app.models import Ingredient, Recipe, ingredient_from_row, recipe_from_row
+from app.models import (
+    FoodItem,
+    Recipe,
+    RecipeItem,
+    food_item_from_row,
+    recipe_from_row,
+    recipe_item_from_row,
+)
 
 
 def current_week_start(today: date | None = None) -> date:
@@ -38,25 +45,75 @@ def pick_recipe_ids(recipe_ids: list[int], count: int) -> list[int]:
     return result
 
 
-def get_ingredients(conn, recipe_id: int) -> list[Ingredient]:
+def list_food_items(conn) -> list[FoodItem]:
+    rows = conn.execute("SELECT * FROM food_items ORDER BY name COLLATE NOCASE").fetchall()
+    return [food_item_from_row(r) for r in rows]
+
+
+def get_food_item(conn, food_item_id: int) -> FoodItem | None:
+    row = conn.execute("SELECT * FROM food_items WHERE id = ?", (food_item_id,)).fetchone()
+    if row is None:
+        return None
+    return food_item_from_row(row)
+
+
+def search_food_items(conn, query: str = "") -> list[FoodItem]:
+    q = (query or "").strip()
+    if not q:
+        return list_food_items(conn)
     rows = conn.execute(
-        "SELECT * FROM ingredients WHERE recipe_id = ? ORDER BY id",
+        """
+        SELECT * FROM food_items
+        WHERE name LIKE ? ESCAPE '!' COLLATE NOCASE
+        ORDER BY name COLLATE NOCASE
+        """,
+        (_like_pattern(q),),
+    ).fetchall()
+    return [food_item_from_row(r) for r in rows]
+
+
+def get_recipe_items(conn, recipe_id: int) -> list[RecipeItem]:
+    rows = conn.execute(
+        """
+        SELECT
+            ri.id AS item_id,
+            ri.recipe_id,
+            ri.food_item_id,
+            ri.amount,
+            ri.unit,
+            f.id,
+            f.name,
+            f.base_amount,
+            f.base_unit,
+            f.calories_kcal,
+            f.protein_g,
+            f.carbohydrates_g,
+            f.fats_g,
+            f.salt_g,
+            f.fiber_g,
+            f.created_at,
+            f.updated_at
+        FROM recipe_items ri
+        JOIN food_items f ON f.id = ri.food_item_id
+        WHERE ri.recipe_id = ?
+        ORDER BY ri.id
+        """,
         (recipe_id,),
     ).fetchall()
-    return [ingredient_from_row(r) for r in rows]
+    return [recipe_item_from_row(r) for r in rows]
 
 
 def get_recipe(conn, recipe_id: int, with_ingredients: bool = True) -> Recipe | None:
     row = conn.execute("SELECT * FROM recipes WHERE id = ?", (recipe_id,)).fetchone()
     if row is None:
         return None
-    ingredients = get_ingredients(conn, recipe_id) if with_ingredients else []
+    ingredients = get_recipe_items(conn, recipe_id) if with_ingredients else []
     return recipe_from_row(row, ingredients)
 
 
 def list_recipes(conn) -> list[Recipe]:
     rows = conn.execute("SELECT * FROM recipes ORDER BY name COLLATE NOCASE").fetchall()
-    return [recipe_from_row(r, get_ingredients(conn, r["id"])) for r in rows]
+    return [recipe_from_row(r, get_recipe_items(conn, r["id"])) for r in rows]
 
 
 def _like_pattern(query: str) -> str:
@@ -76,7 +133,7 @@ def search_recipes(conn, query: str = "") -> list[Recipe]:
         """,
         (_like_pattern(q),),
     ).fetchall()
-    return [recipe_from_row(r, get_ingredients(conn, r["id"])) for r in rows]
+    return [recipe_from_row(r, get_recipe_items(conn, r["id"])) for r in rows]
 
 
 def set_day_recipe(conn, day_index: int, recipe_id: int, week_start: date | None = None) -> dict:
@@ -187,7 +244,7 @@ def _load_menu_items(conn, menu_id: int, length: int) -> list[dict]:
     for row in rows:
         if row["day_index"] >= length:
             continue
-        recipe = recipe_from_row(row, get_ingredients(conn, row["id"]))
+        recipe = recipe_from_row(row, get_recipe_items(conn, row["id"]))
         days.append(
             {
                 "day_index": row["day_index"],

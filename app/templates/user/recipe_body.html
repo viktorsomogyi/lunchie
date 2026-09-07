@@ -18,7 +18,12 @@
 {% if recipe.ingredients %}
 <ul class="ingredients">
   {% for ing in recipe.ingredients %}
-  <li>{{ ing.name }} — {{ ing.amount|num }} {{ ing.unit }}</li>
+  <li>
+    {{ ing.name }} — {{ ing.amount|num }} {{ ing.unit }}
+    {% if recipe.nutrition_mode == 'ingredient' %}
+    <span class="muted small">({{ t('recipe.kcal', n=ing.line_nutrition()['calories_kcal']|num) }})</span>
+    {% endif %}
+  </li>
   {% endfor %}
 </ul>
 {% else %}

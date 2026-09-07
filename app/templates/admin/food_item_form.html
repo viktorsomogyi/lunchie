@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}{% if editing %}{{ t('food.edit') }}{% else %}{{ t('food.create') }}{% endif %} — {{ t('app.name') }}{% endblock %}
+{% block content %}
+<p><a href="/admin/food-items">← {{ t('recipe.back') }}</a></p>
+<h1>{% if editing %}{{ t('food.edit') }}{% else %}{{ t('food.create') }}{% endif %}</h1>
+
+{% if error == 'name' %}
+<p class="error">{{ t('food.name') }}: {{ t('common.required') }}</p>
+{% elif error == 'duplicate' %}
+<p class="error">{{ t('food.duplicate') }}</p>
+{% elif error == 'base_amount' %}
+<p class="error">{{ t('food.base_amount_error') }}</p>
+{% endif %}
+
+<form method="post" action="{% if editing %}/admin/food-items/{{ food.id }}{% else %}/admin/food-items{% endif %}">
+  <label>
+    {{ t('food.name') }}
+    <input type="text" name="name" required value="{{ food.name }}">
+  </label>
+
+  <fieldset>
+    <legend>{{ t('food.nutrition_basis') }}</legend>
+    <p class="muted small">{{ t('food.nutrition_basis_hint') }}</p>
+    <div class="form-grid">
+      <label>
+        {{ t('food.base_amount') }}
+        <input type="number" name="base_amount" min="0.0001" step="any" required value="{{ food.base_amount|num }}">
+      </label>
+      <label>
+        {{ t('food.base_unit') }}
+        <select name="base_unit">
+          {% for u in units %}
+          <option value="{{ u }}" {% if food.base_unit == u %}selected{% endif %}>{{ u }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>{{ t('food.nutrition_for_base') }}</legend>
+    <div class="form-grid nutrition-fields">
+      <label>{{ t('recipe.calories') }} (kcal)
+        <input type="number" name="calories_kcal" min="0" step="any" value="{{ food.calories_kcal|num }}">
+      </label>
+      <label>{{ t('recipe.protein') }} (g)
+        <input type="number" name="protein_g" min="0" step="any" value="{{ food.protein_g|num }}">
+      </label>
+      <label>{{ t('recipe.carbs') }} (g)
+        <input type="number" name="carbohydrates_g" min="0" step="any" value="{{ food.carbohydrates_g|num }}">
+      </label>
+      <label>{{ t('recipe.fats') }} (g)
+        <input type="number" name="fats_g" min="0" step="any" value="{{ food.fats_g|num }}">
+      </label>
+      <label>{{ t('recipe.salt') }} (g)
+        <input type="number" name="salt_g" min="0" step="any" value="{{ food.salt_g|num }}">
+      </label>
+      <label>{{ t('recipe.fiber') }} (g)
+        <input type="number" name="fiber_g" min="0" step="any" value="{{ food.fiber_g|num }}">
+      </label>
+    </div>
+  </fieldset>
+
+  <div class="form-actions">
+    <a href="/admin/food-items" role="button" class="outline secondary">{{ t('common.cancel') }}</a>
+    <button type="submit">{% if editing %}{{ t('recipe.save') }}{% else %}{{ t('food.create') }}{% endif %}</button>
+  </div>
+</form>
+{% endblock %}

@@ -1,5 +1,5 @@
 from app.db import db_session
-from tests.conftest import insert_recipe
+from tests.conftest import insert_food, insert_recipe
 
 
 def test_user_week_empty(client):
@@ -9,10 +9,15 @@ def test_user_week_empty(client):
 
 
 def test_admin_create_edit_delete_recipe(client):
+    with db_session() as conn:
+        tok = insert_food(conn, name="tök", calories_kcal=26, protein_g=1, carbohydrates_g=6.5, fats_g=0.1, salt_g=0.01, fiber_g=0.5)
+        tejfol = insert_food(conn, name="tejföl", calories_kcal=160, protein_g=2.5, carbohydrates_g=3.5, fats_g=15, salt_g=0.05, fiber_g=0)
+
     form = {
         "name": "Tökfőzelék",
         "serves": "4",
         "prep_time_minutes": "40",
+        "nutrition_mode": "recipe",
         "calories_kcal": "220",
         "protein_g": "6",
         "carbohydrates_g": "28",
@@ -20,7 +25,7 @@ def test_admin_create_edit_delete_recipe(client):
         "salt_g": "1",
         "fiber_g": "4",
         "instructions": "Főzd a tököt.",
-        "ingredient_name": ["tök", "tejföl"],
+        "food_item_id": [str(tok), str(tejfol)],
         "ingredient_amount": ["250", "30"],
         "ingredient_unit": ["g", "g"],
     }
@@ -64,7 +69,7 @@ def test_admin_create_edit_delete_recipe(client):
 def test_create_requires_name(client):
     response = client.post(
         "/admin/recipes",
-        data={"name": "  ", "serves": "1", "prep_time_minutes": "10"},
+        data={"name": "  ", "serves": "1", "prep_time_minutes": "10", "nutrition_mode": "recipe"},
     )
     assert response.status_code == 400
 
@@ -78,9 +83,12 @@ def test_regenerate_page(client):
 
 
 def test_ingredient_row_partial(client):
+    with db_session() as conn:
+        insert_food(conn, name="liszt")
     response = client.get("/admin/ingredients/row")
     assert response.status_code == 200
-    assert 'name="ingredient_name"' in response.text
+    assert 'name="food_item_id"' in response.text
+    assert "liszt" in response.text
 
 
 def test_day_recipe_picker_and_assign(client):
@@ -122,35 +130,90 @@ def test_day_recipe_picker_and_assign(client):
     assert client.post("/menu/days/0", data={"recipe_id": 9999}).status_code == 404
 
 
-def test_ingredient_nutrition_totals_per_serving(client):
+def test_catalog_nutrition_scaled_by_amount(client):
+    with db_session() as conn:
+        pasta = insert_food(
+            conn,
+            name="pasta",
+            base_amount=100,
+            base_unit="g",
+            calories_kcal=465,
+            protein_g=8,
+            carbohydrates_g=45,
+            fats_g=4,
+            salt_g=0.01,
+            fiber_g=1,
+        )
+        oil = insert_food(
+            conn,
+            name="oil",
+            base_amount=100,
+            base_unit="ml",
+            calories_kcal=884,
+            protein_g=0,
+            carbohydrates_g=0,
+            fats_g=100,
+            salt_g=0,
+            fiber_g=0,
+        )
+
     form = {
-        "name": "Gulyás",
+        "name": "Pasta dish",
         "serves": "2",
-        "prep_time_minutes": "30",
+        "prep_time_minutes": "20",
         "nutrition_mode": "ingredient",
-        "instructions": "Főzd.",
-        "ingredient_name": ["hús", "hagyma"],
-        "ingredient_amount": ["200", "50"],
-        "ingredient_unit": ["g", "g"],
-        "ingredient_calories_kcal": ["400", "40"],
-        "ingredient_protein_g": ["40", "2"],
-        "ingredient_carbohydrates_g": ["0", "8"],
-        "ingredient_fats_g": ["20", "0"],
-        "ingredient_salt_g": ["1", "0.2"],
-        "ingredient_fiber_g": ["4", "2"],
+        "instructions": "Cook.",
+        "food_item_id": [str(pasta), str(oil)],
+        "ingredient_amount": ["200", "10"],
+        "ingredient_unit": ["g", "ml"],
     }
     created = client.post("/admin/recipes", data=form, follow_redirects=False)
     assert created.status_code == 303
     recipe = client.get("/api/recipes").json()[0]
     assert recipe["nutrition_mode"] == "ingredient"
-    assert recipe["calories_kcal"] == 220
-    assert recipe["protein_g"] == 21
-    assert recipe["carbohydrates_g"] == 4
-    assert recipe["fats_g"] == 10
-    assert recipe["salt_g"] == 0.6
-    assert recipe["fiber_g"] == 3
-    assert recipe["ingredients"][0]["calories_kcal"] == 400
+    # pasta 200g => 2x base; oil 10ml => 0.1x base; then / serves 2
+    # pasta total kcal 930, oil 88.4, sum 1018.4 / 2 = 509.2
+    assert recipe["calories_kcal"] == 509.2
+    assert recipe["protein_g"] == 8
+    assert recipe["carbohydrates_g"] == 45
+    assert recipe["fats_g"] == 9
+    assert recipe["fiber_g"] == 1
+    assert recipe["ingredients"][0]["calories_kcal"] == 930
 
     week = client.get("/")
-    assert "220 kcal" in week.text
+    assert "509.2 kcal" in week.text
     assert "Serves 2" in week.text
+
+
+def test_food_item_crud(client):
+    form = {
+        "name": "pasta",
+        "base_amount": "100",
+        "base_unit": "g",
+        "calories_kcal": "465",
+        "protein_g": "8",
+        "carbohydrates_g": "45",
+        "fats_g": "4",
+        "salt_g": "0.01",
+        "fiber_g": "1",
+    }
+    created = client.post("/admin/food-items", data=form, follow_redirects=False)
+    assert created.status_code == 303
+    listing = client.get("/admin/food-items")
+    assert "pasta" in listing.text
+    assert "100 g" in listing.text
+
+    dup = client.post("/admin/food-items", data=form)
+    assert dup.status_code == 400
+
+    # Get id via DB through recipe helper path: list page only shows name; create recipe uses it.
+    with db_session() as conn:
+        food_id = conn.execute("SELECT id FROM food_items WHERE name = ?", ("pasta",)).fetchone()["id"]
+
+    edit = dict(form)
+    edit["calories_kcal"] = "470"
+    updated = client.post(f"/admin/food-items/{food_id}", data=edit, follow_redirects=False)
+    assert updated.status_code == 303
+
+    deleted = client.post(f"/admin/food-items/{food_id}/delete", follow_redirects=False)
+    assert deleted.status_code == 303

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}{{ t('admin.food_items_title') }} — {{ t('app.name') }}{% endblock %}
+{% block content %}
+<section class="week-header">
+  <h1>{{ t('admin.food_items_title') }}</h1>
+  <div class="admin-actions">
+    <a href="/admin/recipes" role="button" class="outline">{{ t('nav.recipes') }}</a>
+    <a href="/admin/settings" role="button" class="outline">{{ t('nav.settings') }}</a>
+    <a href="/admin/food-items/new" role="button">{{ t('nav.new_food_item') }}</a>
+  </div>
+</section>
+
+{% if request.query_params.get('error') == 'in_use' %}
+<p class="error">{{ t('food.in_use') }}</p>
+{% endif %}
+
+{% if not food_items %}
+<article class="empty-state">
+  <p>{{ t('food.none') }}</p>
+  <p><a href="/admin/food-items/new">{{ t('nav.new_food_item') }}</a></p>
+</article>
+{% else %}
+<figure>
+  <table>
+    <thead>
+      <tr>
+        <th>{{ t('food.name') }}</th>
+        <th>{{ t('food.per') }}</th>
+        <th>{{ t('recipe.calories') }}</th>
+        <th>{{ t('recipe.protein') }}</th>
+        <th>{{ t('recipe.carbs') }}</th>
+        <th>{{ t('recipe.actions') }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for food in food_items %}
+      <tr>
+        <td>{{ food.name }}</td>
+        <td>{{ food.base_amount|num }} {{ food.base_unit }}</td>
+        <td>{{ food.calories_kcal|num }}</td>
+        <td>{{ food.protein_g|num }}</td>
+        <td>{{ food.carbohydrates_g|num }}</td>
+        <td class="row-actions">
+          <a href="/admin/food-items/{{ food.id }}/edit">{{ t('recipe.edit') }}</a>
+          <form method="post" action="/admin/food-items/{{ food.id }}/delete"
+                onsubmit="return confirm({{ t('food.delete_confirm')|tojson }});">
+            <button type="submit" class="outline secondary small-btn">{{ t('recipe.delete') }}</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</figure>
+{% endif %}
+{% endblock %}

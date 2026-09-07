@@ -32,13 +32,13 @@
     <label>
       <input type="radio" name="nutrition_mode" value="recipe"
              {% if recipe.nutrition_mode != 'ingredient' %}checked{% endif %}
-             onchange="document.getElementById('recipe-nutrition').hidden = false; document.querySelectorAll('.ingredient-nutrition').forEach(el => el.hidden = true)">
+             onchange="document.getElementById('recipe-nutrition').hidden = false">
       {{ t('recipe.nutrition_mode_recipe') }}
     </label>
     <label>
       <input type="radio" name="nutrition_mode" value="ingredient"
              {% if recipe.nutrition_mode == 'ingredient' %}checked{% endif %}
-             onchange="document.getElementById('recipe-nutrition').hidden = true; document.querySelectorAll('.ingredient-nutrition').forEach(el => el.hidden = false)">
+             onchange="document.getElementById('recipe-nutrition').hidden = true">
       {{ t('recipe.nutrition_mode_ingredient') }}
     </label>
     <p class="muted small">{{ t('recipe.nutrition_mode_hint') }}</p>
@@ -70,6 +70,9 @@
 
   <fieldset>
     <legend>{{ t('recipe.ingredients') }} <span class="muted">({{ t('recipe.per_person') }})</span></legend>
+    {% if not food_items %}
+    <p class="muted">{{ t('recipe.no_food_items') }} <a href="/admin/food-items/new">{{ t('nav.new_food_item') }}</a></p>
+    {% else %}
     <div id="ingredients">
       {% for ingredient in recipe.ingredients %}
         {% include "admin/ingredient_row.html" %}
@@ -82,6 +85,7 @@
             hx-swap="beforeend">
       {{ t('recipe.add_ingredient') }}
     </button>
+    {% endif %}
   </fieldset>
 
   <label>

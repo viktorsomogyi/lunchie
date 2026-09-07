@@ -1,5 +1,13 @@
 <div class="ingredient-row">
-  <input type="text" name="ingredient_name" placeholder="{{ t('recipe.ingredient_name') }}" value="{{ ingredient.name }}">
+  <select name="food_item_id" required>
+    <option value="">{{ t('recipe.choose_ingredient') }}</option>
+    {% for food in food_items %}
+    <option value="{{ food.id }}"
+            {% if ingredient.food_item_id == food.id or (ingredient.food_item and ingredient.food_item.id == food.id) %}selected{% endif %}>
+      {{ food.name }} ({{ food.base_amount|num }} {{ food.base_unit }})
+    </option>
+    {% endfor %}
+  </select>
   <input type="number" name="ingredient_amount" min="0" step="any" placeholder="{{ t('recipe.amount') }}" value="{{ ingredient.amount|num }}">
   <select name="ingredient_unit">
     {% for u in units %}
@@ -10,24 +18,4 @@
           onclick="this.closest('.ingredient-row').remove()">
     {{ t('recipe.remove') }}
   </button>
-  <div class="ingredient-nutrition form-grid" {% if recipe.nutrition_mode != 'ingredient' %}hidden{% endif %}>
-    <label>{{ t('recipe.calories') }} (kcal)
-      <input type="number" name="ingredient_calories_kcal" min="0" step="any" value="{{ ingredient.calories_kcal|num }}">
-    </label>
-    <label>{{ t('recipe.protein') }} (g)
-      <input type="number" name="ingredient_protein_g" min="0" step="any" value="{{ ingredient.protein_g|num }}">
-    </label>
-    <label>{{ t('recipe.carbs') }} (g)
-      <input type="number" name="ingredient_carbohydrates_g" min="0" step="any" value="{{ ingredient.carbohydrates_g|num }}">
-    </label>
-    <label>{{ t('recipe.fats') }} (g)
-      <input type="number" name="ingredient_fats_g" min="0" step="any" value="{{ ingredient.fats_g|num }}">
-    </label>
-    <label>{{ t('recipe.salt') }} (g)
-      <input type="number" name="ingredient_salt_g" min="0" step="any" value="{{ ingredient.salt_g|num }}">
-    </label>
-    <label>{{ t('recipe.fiber') }} (g)
-      <input type="number" name="ingredient_fiber_g" min="0" step="any" value="{{ ingredient.fiber_g|num }}">
-    </label>
-  </div>
 </div>

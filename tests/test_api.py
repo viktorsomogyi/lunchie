@@ -1,5 +1,5 @@
 from app.db import db_session
-from tests.conftest import insert_recipe
+from tests.conftest import insert_food, insert_recipe
 
 
 def test_health(client):
@@ -15,10 +15,11 @@ def test_recipes_empty(client):
 
 def test_recipe_crud_and_menu(client):
     with db_session() as conn:
+        lencse = insert_food(conn, name="lencse")
         rid = insert_recipe(
             conn,
             name="Lencsefőzelék",
-            ingredients=[{"name": "lencse", "amount": 80, "unit": "g"}],
+            items=[{"food_item_id": lencse, "amount": 80, "unit": "g"}],
         )
 
     recipes = client.get("/api/recipes").json()

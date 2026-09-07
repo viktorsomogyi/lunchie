@@ -4,7 +4,9 @@ Weekly lunch menu generator. Add recipes, randomly generate a Mon–Fri or full-
 
 ## Features
 
-- Recipe CRUD (ingredients, instructions, nutrition, prep time, servings)
+- Ingredient catalog with nutrition per unit (e.g. per 100 g)
+- Recipe CRUD (pick catalog ingredients + amounts, instructions, nutrition, prep time, servings)
+- Nutrition from whole recipe or auto-computed from ingredient densities × amounts
 - Random weekly menu (5 or 7 days)
 - User UI: week view, regenerate, recipe detail
 - Admin UI: recipes + settings (week length, UI language)
