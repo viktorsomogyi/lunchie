@@ -91,6 +91,7 @@ def get_recipe_items(conn, recipe_id: int) -> list[RecipeItem]:
             f.fats_g,
             f.salt_g,
             f.fiber_g,
+            f.product_link,
             f.created_at,
             f.updated_at
         FROM recipe_items ri

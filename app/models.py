@@ -61,6 +61,7 @@ class FoodItem:
     fats_g: float = 0.0
     salt_g: float = 0.0
     fiber_g: float = 0.0
+    product_link: str = ""
     id: int | None = None
     created_at: str | None = None
     updated_at: str | None = None
@@ -75,6 +76,7 @@ class FoodItem:
             "name": self.name,
             "base_amount": self.base_amount,
             "base_unit": self.base_unit,
+            "product_link": self.product_link,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
         }
@@ -115,6 +117,7 @@ class RecipeItem:
             "unit": self.unit,
             "base_amount": self.food_item.base_amount if self.food_item else None,
             "base_unit": self.food_item.base_unit if self.food_item else None,
+            "product_link": self.food_item.product_link if self.food_item else "",
         }
         data.update(nutrition)
         return data
@@ -197,6 +200,7 @@ def food_item_from_row(row) -> FoodItem:
         fats_g=_row_value(row, "fats_g", 0) or 0,
         salt_g=_row_value(row, "salt_g", 0) or 0,
         fiber_g=_row_value(row, "fiber_g", 0) or 0,
+        product_link=_row_value(row, "product_link", "") or "",
         created_at=_row_value(row, "created_at"),
         updated_at=_row_value(row, "updated_at"),
     )

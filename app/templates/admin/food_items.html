@@ -29,6 +29,7 @@
         <th>{{ t('recipe.calories') }}</th>
         <th>{{ t('recipe.protein') }}</th>
         <th>{{ t('recipe.carbs') }}</th>
+        <th>{{ t('food.product_link') }}</th>
         <th>{{ t('recipe.actions') }}</th>
       </tr>
     </thead>
@@ -40,6 +41,13 @@
         <td>{{ food.calories_kcal|num }}</td>
         <td>{{ food.protein_g|num }}</td>
         <td>{{ food.carbohydrates_g|num }}</td>
+        <td>
+          {% if food.product_link %}
+          <a href="{{ food.product_link }}" target="_blank" rel="noopener noreferrer">{{ t('food.open_link') }}</a>
+          {% else %}
+          <span class="muted">—</span>
+          {% endif %}
+        </td>
         <td class="row-actions">
           <a href="/admin/food-items/{{ food.id }}/edit">{{ t('recipe.edit') }}</a>
           <form method="post" action="/admin/food-items/{{ food.id }}/delete"

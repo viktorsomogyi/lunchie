@@ -49,7 +49,8 @@ def test_admin_create_edit_delete_recipe(client):
     detail = client.get(f"/recipes/{recipe_id}")
     assert detail.status_code == 200
     assert "Főzd a tököt." in detail.text
-    assert "tök — 250 g" in detail.text
+    assert "tök" in detail.text
+    assert "250 g" in detail.text
 
     modal = client.get(f"/recipes/{recipe_id}", headers={"HX-Request": "true"})
     assert "recipe-dialog" in modal.text
@@ -196,24 +197,29 @@ def test_food_item_crud(client):
         "fats_g": "4",
         "salt_g": "0.01",
         "fiber_g": "1",
+        "product_link": "https://shop.example.com/pasta",
     }
     created = client.post("/admin/food-items", data=form, follow_redirects=False)
     assert created.status_code == 303
     listing = client.get("/admin/food-items")
     assert "pasta" in listing.text
     assert "100 g" in listing.text
+    assert "https://shop.example.com/pasta" in listing.text
 
     dup = client.post("/admin/food-items", data=form)
     assert dup.status_code == 400
 
-    # Get id via DB through recipe helper path: list page only shows name; create recipe uses it.
     with db_session() as conn:
         food_id = conn.execute("SELECT id FROM food_items WHERE name = ?", ("pasta",)).fetchone()["id"]
 
     edit = dict(form)
     edit["calories_kcal"] = "470"
+    edit["product_link"] = "https://shop.example.com/pasta-v2"
     updated = client.post(f"/admin/food-items/{food_id}", data=edit, follow_redirects=False)
     assert updated.status_code == 303
+    with db_session() as conn:
+        link = conn.execute("SELECT product_link FROM food_items WHERE id = ?", (food_id,)).fetchone()["product_link"]
+        assert link == "https://shop.example.com/pasta-v2"
 
     deleted = client.post(f"/admin/food-items/{food_id}/delete", follow_redirects=False)
     assert deleted.status_code == 303

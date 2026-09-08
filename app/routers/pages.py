@@ -181,6 +181,7 @@ def _food_from_form(form, food_id: int | None = None) -> FoodItem:
         fats_g=_float_field(_form_str(form, "fats_g")),
         salt_g=_float_field(_form_str(form, "salt_g")),
         fiber_g=_float_field(_form_str(form, "fiber_g")),
+        product_link=_form_str(form, "product_link"),
     )
 
 
@@ -548,8 +549,9 @@ async def admin_food_create(request: Request):
                 """
                 INSERT INTO food_items (
                     name, base_amount, base_unit,
-                    calories_kcal, protein_g, carbohydrates_g, fats_g, salt_g, fiber_g
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    calories_kcal, protein_g, carbohydrates_g, fats_g, salt_g, fiber_g,
+                    product_link
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     food.name,
@@ -561,6 +563,7 @@ async def admin_food_create(request: Request):
                     food.fats_g,
                     food.salt_g,
                     food.fiber_g,
+                    food.product_link,
                 ),
             )
         except sqlite3.IntegrityError:
@@ -621,7 +624,7 @@ async def admin_food_update(request: Request, food_id: int):
                 UPDATE food_items SET
                     name = ?, base_amount = ?, base_unit = ?,
                     calories_kcal = ?, protein_g = ?, carbohydrates_g = ?, fats_g = ?, salt_g = ?, fiber_g = ?,
-                    updated_at = datetime('now')
+                    product_link = ?, updated_at = datetime('now')
                 WHERE id = ?
                 """,
                 (
@@ -634,6 +637,7 @@ async def admin_food_update(request: Request, food_id: int):
                     food.fats_g,
                     food.salt_g,
                     food.fiber_g,
+                    food.product_link,
                     food_id,
                 ),
             )

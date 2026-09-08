@@ -91,6 +91,8 @@
     "per": "Per",
     "base_amount": "Base amount",
     "base_unit": "Base unit",
+    "product_link": "Product link",
+    "open_link": "Open",
     "nutrition_basis": "Nutrition basis",
     "nutrition_basis_hint": "Enter nutrition for the base amount (e.g. 465 kcal per 100 g).",
     "nutrition_for_base": "Nutrition for base amount",

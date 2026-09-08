@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS food_items (
     fats_g REAL NOT NULL DEFAULT 0,
     salt_g REAL NOT NULL DEFAULT 0,
     fiber_g REAL NOT NULL DEFAULT 0,
+    product_link TEXT NOT NULL DEFAULT '',
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
@@ -129,6 +130,9 @@ def _migrate(conn: sqlite3.Connection) -> None:
         conn.execute("ALTER TABLE recipes ADD COLUMN nutrition_mode TEXT NOT NULL DEFAULT 'recipe'")
     if "fiber_g" not in recipe_cols:
         conn.execute("ALTER TABLE recipes ADD COLUMN fiber_g REAL NOT NULL DEFAULT 0")
+    food_cols = _table_columns(conn, "food_items")
+    if "product_link" not in food_cols:
+        conn.execute("ALTER TABLE food_items ADD COLUMN product_link TEXT NOT NULL DEFAULT ''")
 
     # Legacy per-recipe ingredients table is replaced by food_items + recipe_items.
     if _table_exists(conn, "ingredients") and not _table_exists(conn, "recipe_items"):

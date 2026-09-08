@@ -91,6 +91,8 @@
     "per": "Alap",
     "base_amount": "Alap mennyiség",
     "base_unit": "Alap egység",
+    "product_link": "Termék link",
+    "open_link": "Megnyitás",
     "nutrition_basis": "Tápérték alapja",
     "nutrition_basis_hint": "Add meg a tápértéket az alap mennyiségre (pl. 465 kcal / 100 g).",
     "nutrition_for_base": "Tápérték az alap mennyiségre",

@@ -33,13 +33,15 @@ def insert_food(
     fats_g=10,
     salt_g=0.1,
     fiber_g=0,
+    product_link="",
 ):
     cur = conn.execute(
         """
         INSERT INTO food_items (
             name, base_amount, base_unit,
-            calories_kcal, protein_g, carbohydrates_g, fats_g, salt_g, fiber_g
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            calories_kcal, protein_g, carbohydrates_g, fats_g, salt_g, fiber_g,
+            product_link
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             name,
@@ -51,6 +53,7 @@ def insert_food(
             fats_g,
             salt_g,
             fiber_g,
+            product_link,
         ),
     )
     return cur.lastrowid

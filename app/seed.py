@@ -300,8 +300,9 @@ def _insert_food(conn, food: dict) -> int:
         """
         INSERT INTO food_items (
             name, base_amount, base_unit,
-            calories_kcal, protein_g, carbohydrates_g, fats_g, salt_g, fiber_g
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            calories_kcal, protein_g, carbohydrates_g, fats_g, salt_g, fiber_g,
+            product_link
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             food["name"],
@@ -313,6 +314,7 @@ def _insert_food(conn, food: dict) -> int:
             food["fats_g"],
             food["salt_g"],
             food["fiber_g"],
+            food.get("product_link", ""),
         ),
     )
     return cur.lastrowid

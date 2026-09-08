@@ -19,7 +19,12 @@
 <ul class="ingredients">
   {% for ing in recipe.ingredients %}
   <li>
-    {{ ing.name }} — {{ ing.amount|num }} {{ ing.unit }}
+    {% if ing.food_item and ing.food_item.product_link %}
+    <a href="{{ ing.food_item.product_link }}" target="_blank" rel="noopener noreferrer">{{ ing.name }}</a>
+    {% else %}
+    {{ ing.name }}
+    {% endif %}
+    — {{ ing.amount|num }} {{ ing.unit }}
     {% if recipe.nutrition_mode == 'ingredient' %}
     <span class="muted small">({{ t('recipe.kcal', n=ing.line_nutrition()['calories_kcal']|num) }})</span>
     {% endif %}

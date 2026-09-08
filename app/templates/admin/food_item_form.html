@@ -18,6 +18,11 @@
     <input type="text" name="name" required value="{{ food.name }}">
   </label>
 
+  <label>
+    {{ t('food.product_link') }}
+    <input type="url" name="product_link" placeholder="https://" value="{{ food.product_link }}">
+  </label>
+
   <fieldset>
     <legend>{{ t('food.nutrition_basis') }}</legend>
     <p class="muted small">{{ t('food.nutrition_basis_hint') }}</p>
