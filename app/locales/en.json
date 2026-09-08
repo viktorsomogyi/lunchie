@@ -57,7 +57,7 @@
     "nutrition_mode_hint": "Cards always show per-person values. Ingredient mode scales catalog nutrition by amount, then divides by servings.",
     "choose_ingredient": "Choose ingredient…",
     "no_food_items": "No ingredients in the catalog yet.",
-    "calories": "Calories",
+    "energy": "Energy",
     "protein": "Protein",
     "carbs": "Carbohydrates",
     "fats": "Fats",

@@ -71,7 +71,7 @@ Adding a language later = new `locales/{code}.json` + entry in the admin dropdow
 - `id`, `name` (unique), `instructions`
 - `serves` (int, ≥ 1, default 1)
 - `prep_time_minutes`
-- `calories_kcal`, `protein_g`, `carbohydrates_g`, `fats_g`, `salt_g`, `fiber_g` — per person
+- `energy_kcal`, `protein_g`, `carbohydrates_g`, `fats_g`, `salt_g`, `fiber_g` — per person
 - `created_at`, `updated_at`
 
 **ingredients**

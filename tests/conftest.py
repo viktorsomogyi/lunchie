@@ -27,7 +27,7 @@ def insert_food(
     name="hús",
     base_amount=100,
     base_unit="g",
-    calories_kcal=200,
+    energy_kcal=200,
     protein_g=20,
     carbohydrates_g=0,
     fats_g=10,
@@ -39,7 +39,7 @@ def insert_food(
         """
         INSERT INTO food_items (
             name, base_amount, base_unit,
-            calories_kcal, protein_g, carbohydrates_g, fats_g, salt_g, fiber_g,
+            energy_kcal, protein_g, carbohydrates_g, fats_g, salt_g, fiber_g,
             product_link
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
@@ -47,7 +47,7 @@ def insert_food(
             name,
             base_amount,
             base_unit,
-            calories_kcal,
+            energy_kcal,
             protein_g,
             carbohydrates_g,
             fats_g,
@@ -65,7 +65,7 @@ def insert_recipe(conn, name="Gulyás", **overrides):
         "instructions": overrides.get("instructions", "Főzd."),
         "serves": overrides.get("serves", 4),
         "prep_time_minutes": overrides.get("prep_time_minutes", 30),
-        "calories_kcal": overrides.get("calories_kcal", 400),
+        "energy_kcal": overrides.get("energy_kcal", 400),
         "protein_g": overrides.get("protein_g", 20),
         "carbohydrates_g": overrides.get("carbohydrates_g", 30),
         "fats_g": overrides.get("fats_g", 10),
@@ -77,7 +77,7 @@ def insert_recipe(conn, name="Gulyás", **overrides):
         """
         INSERT INTO recipes (
             name, instructions, serves, prep_time_minutes,
-            calories_kcal, protein_g, carbohydrates_g, fats_g, salt_g, fiber_g,
+            energy_kcal, protein_g, carbohydrates_g, fats_g, salt_g, fiber_g,
             nutrition_mode
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
@@ -86,7 +86,7 @@ def insert_recipe(conn, name="Gulyás", **overrides):
             fields["instructions"],
             fields["serves"],
             fields["prep_time_minutes"],
-            fields["calories_kcal"],
+            fields["energy_kcal"],
             fields["protein_g"],
             fields["carbohydrates_g"],
             fields["fats_g"],

@@ -51,7 +51,7 @@ def test_recipe_ingredients_export_json_and_csv(client):
         pasta = insert_food(
             conn,
             name="pasta",
-            calories_kcal=465,
+            energy_kcal=465,
             protein_g=8,
             carbohydrates_g=45,
             fats_g=4,
@@ -78,7 +78,7 @@ def test_recipe_ingredients_export_json_and_csv(client):
     assert payload["ingredients"][0]["name"] == "pasta"
     assert payload["ingredients"][0]["amount"] == 200
     assert payload["ingredients"][0]["unit"] == "g"
-    assert payload["ingredients"][0]["calories_kcal"] == 930
+    assert payload["ingredients"][0]["energy_kcal"] == 930
     assert payload["ingredients"][0]["product_link"] == "https://shop.example.com/pasta"
 
     csv_resp = client.get(f"/api/recipes/{rid}/ingredients.csv")

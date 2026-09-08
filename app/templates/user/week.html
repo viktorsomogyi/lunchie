@@ -40,7 +40,7 @@
     {% if recipe %}
     <h3>{{ recipe.name }}</h3>
     <ul class="meta">
-      <li>{{ t('recipe.kcal', n=recipe.calories_kcal|num) }}</li>
+      <li>{{ t('recipe.kcal', n=recipe.energy_kcal|num) }}</li>
       <li>{{ t('recipe.minutes', n=recipe.prep_time_minutes) }}</li>
       <li>{{ t('recipe.serves_n', n=recipe.serves) }}</li>
     </ul>

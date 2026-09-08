@@ -22,7 +22,7 @@ _CSV_FIELDS = (
     "amount",
     "unit",
     "product_link",
-    "calories_kcal",
+    "energy_kcal",
     "protein_g",
     "carbohydrates_g",
     "fats_g",

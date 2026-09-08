@@ -130,7 +130,7 @@ rest:
         json_attributes:
           - serves
           - prep_time_minutes
-          - calories_kcal
+          - energy_kcal
           - protein_g
           - carbohydrates_g
           - fats_g

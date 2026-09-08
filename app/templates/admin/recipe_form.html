@@ -47,8 +47,8 @@
   <fieldset id="recipe-nutrition" {% if recipe.nutrition_mode == 'ingredient' %}hidden{% endif %}>
     <legend>{{ t('recipe.nutrition') }}</legend>
     <div class="form-grid nutrition-fields">
-      <label>{{ t('recipe.calories') }} (kcal)
-        <input type="number" name="calories_kcal" min="0" step="any" value="{{ recipe.calories_kcal|num }}">
+      <label>{{ t('recipe.energy') }} (kcal)
+        <input type="number" name="energy_kcal" min="0" step="any" value="{{ recipe.energy_kcal|num }}">
       </label>
       <label>{{ t('recipe.protein') }} (g)
         <input type="number" name="protein_g" min="0" step="any" value="{{ recipe.protein_g|num }}">

@@ -26,7 +26,7 @@
       <tr>
         <th>{{ t('food.name') }}</th>
         <th>{{ t('food.per') }}</th>
-        <th>{{ t('recipe.calories') }}</th>
+        <th>{{ t('recipe.energy') }}</th>
         <th>{{ t('recipe.protein') }}</th>
         <th>{{ t('recipe.carbs') }}</th>
         <th>{{ t('food.product_link') }}</th>
@@ -38,7 +38,7 @@
       <tr>
         <td>{{ food.name }}</td>
         <td>{{ food.base_amount|num }} {{ food.base_unit }}</td>
-        <td>{{ food.calories_kcal|num }}</td>
+        <td>{{ food.energy_kcal|num }}</td>
         <td>{{ food.protein_g|num }}</td>
         <td>{{ food.carbohydrates_g|num }}</td>
         <td>

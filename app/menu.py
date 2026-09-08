@@ -85,7 +85,7 @@ def get_recipe_items(conn, recipe_id: int) -> list[RecipeItem]:
             f.name,
             f.base_amount,
             f.base_unit,
-            f.calories_kcal,
+            f.energy_kcal,
             f.protein_g,
             f.carbohydrates_g,
             f.fats_g,

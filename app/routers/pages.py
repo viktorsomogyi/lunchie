@@ -152,7 +152,7 @@ def _recipe_from_form(form, conn, recipe_id: int | None = None) -> tuple[Recipe,
         instructions=_form_str(form, "instructions"),
         serves=_int_field(_form_str(form, "serves"), 1, minimum=1),
         prep_time_minutes=_int_field(_form_str(form, "prep_time_minutes"), 0, minimum=0),
-        calories_kcal=_float_field(_form_str(form, "calories_kcal")),
+        energy_kcal=_float_field(_form_str(form, "energy_kcal")),
         protein_g=_float_field(_form_str(form, "protein_g")),
         carbohydrates_g=_float_field(_form_str(form, "carbohydrates_g")),
         fats_g=_float_field(_form_str(form, "fats_g")),
@@ -175,7 +175,7 @@ def _food_from_form(form, food_id: int | None = None) -> FoodItem:
         name=_form_str(form, "name"),
         base_amount=_float_field(_form_str(form, "base_amount"), 100) or 100,
         base_unit=unit,
-        calories_kcal=_float_field(_form_str(form, "calories_kcal")),
+        energy_kcal=_float_field(_form_str(form, "energy_kcal")),
         protein_g=_float_field(_form_str(form, "protein_g")),
         carbohydrates_g=_float_field(_form_str(form, "carbohydrates_g")),
         fats_g=_float_field(_form_str(form, "fats_g")),
@@ -358,7 +358,7 @@ async def admin_recipe_create(request: Request):
                 """
                 INSERT INTO recipes (
                     name, instructions, serves, prep_time_minutes,
-                    calories_kcal, protein_g, carbohydrates_g, fats_g, salt_g, fiber_g,
+                    energy_kcal, protein_g, carbohydrates_g, fats_g, salt_g, fiber_g,
                     nutrition_mode
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
@@ -367,7 +367,7 @@ async def admin_recipe_create(request: Request):
                     recipe.instructions,
                     recipe.serves,
                     recipe.prep_time_minutes,
-                    recipe.calories_kcal,
+                    recipe.energy_kcal,
                     recipe.protein_g,
                     recipe.carbohydrates_g,
                     recipe.fats_g,
@@ -440,7 +440,7 @@ async def admin_recipe_update(request: Request, recipe_id: int):
                 """
                 UPDATE recipes SET
                     name = ?, instructions = ?, serves = ?, prep_time_minutes = ?,
-                    calories_kcal = ?, protein_g = ?, carbohydrates_g = ?, fats_g = ?, salt_g = ?, fiber_g = ?,
+                    energy_kcal = ?, protein_g = ?, carbohydrates_g = ?, fats_g = ?, salt_g = ?, fiber_g = ?,
                     nutrition_mode = ?, updated_at = datetime('now')
                 WHERE id = ?
                 """,
@@ -449,7 +449,7 @@ async def admin_recipe_update(request: Request, recipe_id: int):
                     recipe.instructions,
                     recipe.serves,
                     recipe.prep_time_minutes,
-                    recipe.calories_kcal,
+                    recipe.energy_kcal,
                     recipe.protein_g,
                     recipe.carbohydrates_g,
                     recipe.fats_g,
@@ -549,7 +549,7 @@ async def admin_food_create(request: Request):
                 """
                 INSERT INTO food_items (
                     name, base_amount, base_unit,
-                    calories_kcal, protein_g, carbohydrates_g, fats_g, salt_g, fiber_g,
+                    energy_kcal, protein_g, carbohydrates_g, fats_g, salt_g, fiber_g,
                     product_link
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
@@ -557,7 +557,7 @@ async def admin_food_create(request: Request):
                     food.name,
                     food.base_amount,
                     food.base_unit,
-                    food.calories_kcal,
+                    food.energy_kcal,
                     food.protein_g,
                     food.carbohydrates_g,
                     food.fats_g,
@@ -623,7 +623,7 @@ async def admin_food_update(request: Request, food_id: int):
                 """
                 UPDATE food_items SET
                     name = ?, base_amount = ?, base_unit = ?,
-                    calories_kcal = ?, protein_g = ?, carbohydrates_g = ?, fats_g = ?, salt_g = ?, fiber_g = ?,
+                    energy_kcal = ?, protein_g = ?, carbohydrates_g = ?, fats_g = ?, salt_g = ?, fiber_g = ?,
                     product_link = ?, updated_at = datetime('now')
                 WHERE id = ?
                 """,
@@ -631,7 +631,7 @@ async def admin_food_update(request: Request, food_id: int):
                     food.name,
                     food.base_amount,
                     food.base_unit,
-                    food.calories_kcal,
+                    food.energy_kcal,
                     food.protein_g,
                     food.carbohydrates_g,
                     food.fats_g,

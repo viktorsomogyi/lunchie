@@ -22,7 +22,7 @@
       <tr>
         <th>{{ t('recipe.name') }}</th>
         <th>{{ t('recipe.prep_time') }}</th>
-        <th>{{ t('recipe.calories') }}</th>
+        <th>{{ t('recipe.energy') }}</th>
         <th>{{ t('recipe.serves') }}</th>
         <th>{{ t('recipe.actions') }}</th>
       </tr>
@@ -32,7 +32,7 @@
       <tr>
         <td><a href="/recipes/{{ recipe.id }}">{{ recipe.name }}</a></td>
         <td>{{ t('recipe.minutes', n=recipe.prep_time_minutes) }}</td>
-        <td>{{ t('recipe.kcal', n=recipe.calories_kcal|num) }}</td>
+        <td>{{ t('recipe.kcal', n=recipe.energy_kcal|num) }}</td>
         <td>{{ recipe.serves }}</td>
         <td class="row-actions">
           <a href="/admin/recipes/{{ recipe.id }}/edit">{{ t('recipe.edit') }}</a>

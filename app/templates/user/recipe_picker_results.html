@@ -8,7 +8,7 @@
       <strong>{{ recipe.name }}</strong>
       {% if recipe.id == current_recipe_id %}<span class="badge">{{ t('week.current') }}</span>{% endif %}
       <div class="muted small">
-        {{ t('recipe.kcal', n=recipe.calories_kcal|num) }} ·
+        {{ t('recipe.kcal', n=recipe.energy_kcal|num) }} ·
         {{ t('recipe.minutes', n=recipe.prep_time_minutes) }} ·
         {{ t('recipe.serves_n', n=recipe.serves) }}
       </div>

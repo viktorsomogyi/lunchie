@@ -57,7 +57,7 @@
     "nutrition_mode_hint": "A kártyákon mindig a fejenkénti érték jelenik meg. Hozzávaló módban a katalógus tápértékét a mennyiséggel skálázzuk, majd az adagszámmal osztjuk.",
     "choose_ingredient": "Válassz hozzávalót…",
     "no_food_items": "Még nincsenek hozzávalók a katalógusban.",
-    "calories": "Kalória",
+    "energy": "Energia",
     "protein": "Fehérje",
     "carbs": "Szénhidrát",
     "fats": "Zsír",

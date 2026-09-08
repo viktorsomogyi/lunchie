@@ -10,15 +10,15 @@ def test_user_week_empty(client):
 
 def test_admin_create_edit_delete_recipe(client):
     with db_session() as conn:
-        tok = insert_food(conn, name="tök", calories_kcal=26, protein_g=1, carbohydrates_g=6.5, fats_g=0.1, salt_g=0.01, fiber_g=0.5)
-        tejfol = insert_food(conn, name="tejföl", calories_kcal=160, protein_g=2.5, carbohydrates_g=3.5, fats_g=15, salt_g=0.05, fiber_g=0)
+        tok = insert_food(conn, name="tök", energy_kcal=26, protein_g=1, carbohydrates_g=6.5, fats_g=0.1, salt_g=0.01, fiber_g=0.5)
+        tejfol = insert_food(conn, name="tejföl", energy_kcal=160, protein_g=2.5, carbohydrates_g=3.5, fats_g=15, salt_g=0.05, fiber_g=0)
 
     form = {
         "name": "Tökfőzelék",
         "serves": "4",
         "prep_time_minutes": "40",
         "nutrition_mode": "recipe",
-        "calories_kcal": "220",
+        "energy_kcal": "220",
         "protein_g": "6",
         "carbohydrates_g": "28",
         "fats_g": "9",
@@ -138,7 +138,7 @@ def test_catalog_nutrition_scaled_by_amount(client):
             name="pasta",
             base_amount=100,
             base_unit="g",
-            calories_kcal=465,
+            energy_kcal=465,
             protein_g=8,
             carbohydrates_g=45,
             fats_g=4,
@@ -150,7 +150,7 @@ def test_catalog_nutrition_scaled_by_amount(client):
             name="oil",
             base_amount=100,
             base_unit="ml",
-            calories_kcal=884,
+            energy_kcal=884,
             protein_g=0,
             carbohydrates_g=0,
             fats_g=100,
@@ -174,12 +174,12 @@ def test_catalog_nutrition_scaled_by_amount(client):
     assert recipe["nutrition_mode"] == "ingredient"
     # pasta 200g => 2x base; oil 10ml => 0.1x base; then / serves 2
     # pasta total kcal 930, oil 88.4, sum 1018.4 / 2 = 509.2
-    assert recipe["calories_kcal"] == 509.2
+    assert recipe["energy_kcal"] == 509.2
     assert recipe["protein_g"] == 8
     assert recipe["carbohydrates_g"] == 45
     assert recipe["fats_g"] == 9
     assert recipe["fiber_g"] == 1
-    assert recipe["ingredients"][0]["calories_kcal"] == 930
+    assert recipe["ingredients"][0]["energy_kcal"] == 930
 
     week = client.get("/")
     assert "509.2 kcal" in week.text
@@ -191,7 +191,7 @@ def test_food_item_crud(client):
         "name": "pasta",
         "base_amount": "100",
         "base_unit": "g",
-        "calories_kcal": "465",
+        "energy_kcal": "465",
         "protein_g": "8",
         "carbohydrates_g": "45",
         "fats_g": "4",
@@ -213,7 +213,7 @@ def test_food_item_crud(client):
         food_id = conn.execute("SELECT id FROM food_items WHERE name = ?", ("pasta",)).fetchone()["id"]
 
     edit = dict(form)
-    edit["calories_kcal"] = "470"
+    edit["energy_kcal"] = "470"
     edit["product_link"] = "https://shop.example.com/pasta-v2"
     updated = client.post(f"/admin/food-items/{food_id}", data=edit, follow_redirects=False)
     assert updated.status_code == 303

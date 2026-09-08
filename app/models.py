@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 
-NUTRITION_FIELDS = ("calories_kcal", "protein_g", "carbohydrates_g", "fats_g", "salt_g", "fiber_g")
+NUTRITION_FIELDS = ("energy_kcal", "protein_g", "carbohydrates_g", "fats_g", "salt_g", "fiber_g")
 NUTRITION_MODE_RECIPE = "recipe"
 NUTRITION_MODE_INGREDIENT = "ingredient"
 
@@ -55,7 +55,7 @@ class FoodItem:
     name: str
     base_amount: float = 100.0
     base_unit: str = "g"
-    calories_kcal: float = 0.0
+    energy_kcal: float = 0.0
     protein_g: float = 0.0
     carbohydrates_g: float = 0.0
     fats_g: float = 0.0
@@ -129,7 +129,7 @@ class Recipe:
     instructions: str = ""
     serves: int = 1
     prep_time_minutes: int = 0
-    calories_kcal: float = 0.0
+    energy_kcal: float = 0.0
     protein_g: float = 0.0
     carbohydrates_g: float = 0.0
     fats_g: float = 0.0
@@ -194,7 +194,7 @@ def food_item_from_row(row) -> FoodItem:
         name=row["name"],
         base_amount=_row_value(row, "base_amount", 100) or 100,
         base_unit=_row_value(row, "base_unit", "g") or "g",
-        calories_kcal=_row_value(row, "calories_kcal", 0) or 0,
+        energy_kcal=_row_value(row, "energy_kcal", 0) or 0,
         protein_g=_row_value(row, "protein_g", 0) or 0,
         carbohydrates_g=_row_value(row, "carbohydrates_g", 0) or 0,
         fats_g=_row_value(row, "fats_g", 0) or 0,
@@ -213,7 +213,7 @@ def recipe_from_row(row, ingredients: list | None = None) -> Recipe:
         instructions=row["instructions"],
         serves=row["serves"],
         prep_time_minutes=row["prep_time_minutes"],
-        calories_kcal=_row_value(row, "calories_kcal", 0) or 0,
+        energy_kcal=_row_value(row, "energy_kcal", 0) or 0,
         protein_g=_row_value(row, "protein_g", 0) or 0,
         carbohydrates_g=_row_value(row, "carbohydrates_g", 0) or 0,
         fats_g=_row_value(row, "fats_g", 0) or 0,
