@@ -1,4 +1,5 @@
 import sqlite3
+import uuid
 from datetime import date
 from pathlib import Path
 from typing import Annotated
@@ -17,6 +18,7 @@ from app.menu import (
     get_recipe,
     list_food_items,
     list_recipes,
+    search_food_items,
     search_recipes,
     set_day_recipe,
     week_length,
@@ -478,9 +480,13 @@ def admin_recipe_delete(recipe_id: int):
     return RedirectResponse(url="/admin/recipes", status_code=303)
 
 
+def _clean_row_id(row_id: str) -> str:
+    cleaned = "".join(c for c in (row_id or "") if c.isalnum() or c in "-_")[:40]
+    return cleaned or f"ing-row-{uuid.uuid4().hex[:8]}"
+
+
 @router.get("/admin/ingredients/row", response_class=HTMLResponse)
-def ingredient_row(request: Request, nutrition_mode: str = NUTRITION_MODE_INGREDIENT):
-    mode = NUTRITION_MODE_INGREDIENT if nutrition_mode == NUTRITION_MODE_INGREDIENT else NUTRITION_MODE_RECIPE
+def ingredient_row(request: Request, row_id: str = ""):
     with db_session() as conn:
         food_items = list_food_items(conn)
         return render(
@@ -489,10 +495,39 @@ def ingredient_row(request: Request, nutrition_mode: str = NUTRITION_MODE_INGRED
             _ctx(
                 request,
                 conn,
+                row_id=_clean_row_id(row_id),
                 ingredient=_blank_recipe_item(food_items),
-                food_items=food_items,
-                recipe=Recipe(name="", nutrition_mode=mode),
             ),
+        )
+
+
+def _food_picker_context(request: Request, conn, target: str, query: str = ""):
+    return _ctx(
+        request,
+        conn,
+        target=target,
+        query=query,
+        food_items=search_food_items(conn, query),
+    )
+
+
+@router.get("/admin/food-items/picker", response_class=HTMLResponse)
+def food_picker(request: Request, target: str = "", q: str = ""):
+    with db_session() as conn:
+        return render(
+            request,
+            "admin/food_picker.html",
+            _food_picker_context(request, conn, target, q),
+        )
+
+
+@router.get("/admin/food-items/picker/results", response_class=HTMLResponse)
+def food_picker_results(request: Request, target: str = "", q: str = ""):
+    with db_session() as conn:
+        return render(
+            request,
+            "admin/food_picker_results.html",
+            _food_picker_context(request, conn, target, q),
         )
 
 

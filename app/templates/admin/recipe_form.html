@@ -75,16 +75,29 @@
     {% else %}
     <div id="ingredients">
       {% for ingredient in recipe.ingredients %}
+        {% set row_id = 'ing-row-' ~ loop.index %}
         {% include "admin/ingredient_row.html" %}
       {% endfor %}
     </div>
     <button type="button" class="outline"
             hx-get="/admin/ingredients/row"
-            hx-include="[name=nutrition_mode]"
             hx-target="#ingredients"
             hx-swap="beforeend">
       {{ t('recipe.add_ingredient') }}
     </button>
+    <script>
+      function pickFoodItem(targetId, id, name, unit) {
+        const row = document.getElementById(targetId);
+        if (!row) return;
+        const hidden = row.querySelector('input[name="food_item_id"]');
+        const label = row.querySelector('.ing-name');
+        const unitSel = row.querySelector('select[name="ingredient_unit"]');
+        if (hidden) hidden.value = id;
+        if (label) label.textContent = name;
+        if (unitSel && unit) unitSel.value = unit;
+        document.getElementById('modal-root').innerHTML = '';
+      }
+    </script>
     {% endif %}
   </fieldset>
 

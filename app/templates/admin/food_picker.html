@@ -1,0 +1,26 @@
+<dialog id="recipe-dialog" open class="recipe-dialog picker-dialog">
+  <article>
+    <header>
+      <button class="close" type="button" aria-label="{{ t('common.close') }}"
+              onclick="document.getElementById('modal-root').innerHTML=''">×</button>
+      <h2>{{ t('food.choose_title') }}</h2>
+    </header>
+    <label>
+      {{ t('week.search') }}
+      <input
+        type="search"
+        name="q"
+        value="{{ query }}"
+        placeholder="{{ t('week.search_placeholder') }}"
+        autofocus
+        hx-get="/admin/food-items/picker/results"
+        hx-vals='{"target": {{ target|tojson }} }'
+        hx-target="#food-picker-results"
+        hx-trigger="input changed delay:200ms, search"
+        hx-include="this">
+    </label>
+    <div id="food-picker-results">
+      {% include "admin/food_picker_results.html" %}
+    </div>
+  </article>
+</dialog>

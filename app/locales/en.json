@@ -100,6 +100,8 @@
     "nutrition_for_base": "Nutrition for base amount",
     "create": "Create ingredient",
     "edit": "Edit ingredient",
+    "choose": "Choose…",
+    "choose_title": "Choose ingredient",
     "none": "No ingredients yet.",
     "duplicate": "An ingredient with this name already exists.",
     "delete_confirm": "Delete this ingredient?",

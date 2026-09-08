@@ -1,0 +1,21 @@
+{% if not food_items %}
+<p class="muted">{{ t('week.no_matches') }}</p>
+{% else %}
+<ul class="picker-list">
+  {% for food in food_items %}
+  <li class="picker-item">
+    <div>
+      <strong>{{ food.name }}</strong>
+      <div class="muted small">
+        {{ t('food.per') }} {{ food.base_amount|num }} {{ food.base_unit }} ·
+        {{ food.energy_kcal|num }} kcal
+      </div>
+    </div>
+    <button type="button" class="small-btn"
+            onclick="pickFoodItem({{ target|tojson }}, {{ food.id }}, {{ food.name|tojson }}, {{ food.base_unit|tojson }})">
+      {{ t('week.select') }}
+    </button>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}

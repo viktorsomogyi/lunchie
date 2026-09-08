@@ -1,19 +1,21 @@
-<div class="ingredient-row">
-  <select name="food_item_id" required>
-    <option value="">{{ t('recipe.choose_ingredient') }}</option>
-    {% for food in food_items %}
-    <option value="{{ food.id }}"
-            {% if ingredient.food_item_id == food.id or (ingredient.food_item and ingredient.food_item.id == food.id) %}selected{% endif %}>
-      {{ food.name }} ({{ food.base_amount|num }} {{ food.base_unit }})
-    </option>
-    {% endfor %}
-  </select>
+<div class="ingredient-row" id="{{ row_id }}">
+  <input type="hidden" name="food_item_id" value="{% if ingredient.food_item_id %}{{ ingredient.food_item_id }}{% elif ingredient.food_item %}{{ ingredient.food_item.id }}{% endif %}">
+  <span class="ing-name">
+    {% if ingredient.food_item %}{{ ingredient.food_item.name }}{% elif ingredient.name %}{{ ingredient.name }}{% else %}<span class="muted">{{ t('recipe.choose_ingredient') }}</span>{% endif %}
+  </span>
   <input type="number" name="ingredient_amount" min="0" step="any" placeholder="{{ t('recipe.amount') }}" value="{{ ingredient.amount|num }}">
   <select name="ingredient_unit">
     {% for u in units %}
     <option value="{{ u }}" {% if ingredient.unit == u %}selected{% endif %}>{{ u }}</option>
     {% endfor %}
   </select>
+  <button type="button" class="outline small-btn"
+          hx-get="/admin/food-items/picker"
+          hx-vals='{"target": {{ row_id|tojson }} }'
+          hx-target="#modal-root"
+          hx-swap="innerHTML">
+    {{ t('food.choose') }}
+  </button>
   <button type="button" class="outline secondary small-btn"
           onclick="this.closest('.ingredient-row').remove()">
     {{ t('recipe.remove') }}

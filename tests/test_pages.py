@@ -89,7 +89,48 @@ def test_ingredient_row_partial(client):
     response = client.get("/admin/ingredients/row")
     assert response.status_code == 200
     assert 'name="food_item_id"' in response.text
-    assert "liszt" in response.text
+    assert "/admin/food-items/picker" in response.text
+    assert 'id="ing-row-' in response.text
+
+    custom = client.get("/admin/ingredients/row", params={"row_id": "ing-row-7"})
+    assert 'id="ing-row-7"' in custom.text
+
+
+def test_food_picker_modal_and_search(client):
+    with db_session() as conn:
+        insert_food(conn, name="liszt")
+        insert_food(conn, name="tök")
+
+    picker = client.get("/admin/food-items/picker", params={"target": "ing-row-1"})
+    assert picker.status_code == 200
+    assert "ing-row-1" in picker.text
+    assert "liszt" in picker.text
+    assert "tök" in picker.text
+
+    filtered = client.get(
+        "/admin/food-items/picker/results",
+        params={"target": "ing-row-1", "q": "liszt"},
+    )
+    assert filtered.status_code == 200
+    assert "liszt" in filtered.text
+    assert "tök" not in filtered.text
+    assert "pickFoodItem" in filtered.text
+
+    none = client.get(
+        "/admin/food-items/picker/results",
+        params={"target": "ing-row-1", "q": "xyzzy"},
+    )
+    assert "No matching" in none.text
+
+
+def test_recipe_form_uses_food_picker(client):
+    with db_session() as conn:
+        insert_food(conn, name="liszt")
+    form_page = client.get("/admin/recipes/new")
+    assert form_page.status_code == 200
+    assert "pickFoodItem" in form_page.text
+    assert "/admin/food-items/picker" in form_page.text
+    assert 'name="food_item_id" type="hidden"' in form_page.text or 'type="hidden" name="food_item_id"' in form_page.text
 
 
 def test_day_recipe_picker_and_assign(client):
