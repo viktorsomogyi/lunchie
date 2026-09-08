@@ -1,9 +1,11 @@
 import csv
 import io
 import re
+import unicodedata
+from urllib.parse import quote
 
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import JSONResponse, Response
 
 from app.db import db_session
 from app.menu import (
@@ -38,9 +40,18 @@ def _recipe_payload(recipe) -> dict | None:
 
 
 def _safe_filename(name: str) -> str:
-    cleaned = re.sub(r"[^\w\-]+", "_", name.strip(), flags=re.UNICODE)
+    # ASCII-only so Content-Disposition stays valid in every browser
+    # (Opera chokes on raw non-ASCII filenames, e.g. Hungarian accents).
+    normalized = unicodedata.normalize("NFKD", name.strip())
+    ascii_name = normalized.encode("ascii", "ignore").decode("ascii")
+    cleaned = re.sub(r"[^A-Za-z0-9\-]+", "_", ascii_name)
     cleaned = cleaned.strip("_") or "recipe"
     return cleaned[:80]
+
+
+def _content_disposition(filename: str) -> str:
+    # RFC 6266 + RFC 5987: ASCII fallback plus percent-encoded UTF-8 name.
+    return f'attachment; filename="{filename}"; filename*=UTF-8\'\'{quote(filename)}'
 
 
 def _ingredient_rows(recipe) -> list[dict]:
@@ -139,7 +150,7 @@ def recipe_ingredients_json(recipe_id: int):
     }
     return JSONResponse(
         content=payload,
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        headers={"Content-Disposition": _content_disposition(filename)},
     )
 
 
@@ -149,15 +160,17 @@ def recipe_ingredients_csv(recipe_id: int):
         recipe = get_recipe(conn, recipe_id)
     if recipe is None:
         raise HTTPException(status_code=404, detail="Recipe not found")
-    buffer = io.StringIO()
+    buffer = io.StringIO(newline="")
     writer = csv.DictWriter(buffer, fieldnames=_CSV_FIELDS, extrasaction="ignore")
     writer.writeheader()
     for row in _ingredient_rows(recipe):
         writer.writerow(row)
-    buffer.seek(0)
     filename = f"{_safe_filename(recipe.name)}_ingredients.csv"
-    return StreamingResponse(
-        iter([buffer.getvalue()]),
+    # BOM so spreadsheet apps detect UTF-8 (Hungarian accents); bytes body
+    # instead of str-chunked StreamingResponse, which Opera mishandles.
+    content = ("\ufeff" + buffer.getvalue()).encode("utf-8")
+    return Response(
+        content=content,
         media_type="text/csv; charset=utf-8",
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        headers={"Content-Disposition": _content_disposition(filename)},
     )

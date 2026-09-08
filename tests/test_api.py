@@ -95,6 +95,41 @@ def test_recipe_ingredients_export_json_and_csv(client):
     assert client.get("/api/recipes/9999/ingredients.csv").status_code == 404
 
 
+def test_ingredients_export_accented_name_download_headers(client):
+    import csv as csv_module
+    import io as io_module
+
+    with db_session() as conn:
+        tok = insert_food(conn, name="tök")
+        rid = insert_recipe(
+            conn,
+            name="Tökfőzelék kaporral",
+            items=[{"food_item_id": tok, "amount": 250, "unit": "g"}],
+        )
+
+    for suffix in ("json", "csv"):
+        resp = client.get(f"/api/recipes/{rid}/ingredients.{suffix}")
+        assert resp.status_code == 200
+        disposition = resp.headers.get("content-disposition", "")
+        assert "attachment" in disposition
+        # Header must be pure ASCII (Opera rejects raw non-ASCII filenames).
+        disposition.encode("ascii")
+        assert "filename*=" in disposition
+        assert f"ingredients.{suffix}" in disposition
+
+    # CSV has a UTF-8 BOM so spreadsheet apps keep Hungarian accents.
+    csv_resp = client.get(f"/api/recipes/{rid}/ingredients.csv")
+    assert csv_resp.content.startswith(b"\xef\xbb\xbf")
+    rows = list(csv_module.DictReader(io_module.StringIO(csv_resp.text.lstrip("\ufeff"))))
+    assert len(rows) == 1
+    assert rows[0]["name"] == "tök"
+    assert rows[0]["amount"] == "250.0"
+
+    json_resp = client.get(f"/api/recipes/{rid}/ingredients.json")
+    assert "application/json" in json_resp.headers.get("content-type", "")
+    assert json_resp.json()["ingredients"][0]["name"] == "tök"
+
+
 def test_settings_language_and_week_length(client):
     page = client.get("/")
     assert page.status_code == 200
