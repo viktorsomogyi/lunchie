@@ -48,6 +48,8 @@
     "minutes": "{n} perc",
     "instructions": "Elkészítés",
     "ingredients": "Hozzávalók",
+    "export_json": "JSON export",
+    "export_csv": "CSV export",
     "nutrition": "Tápérték (fejenként)",
     "nutrition_mode": "Tápérték forrása",
     "nutrition_mode_recipe": "Egész recept (fejenként)",

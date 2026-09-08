@@ -218,6 +218,29 @@ nav a[aria-current="page"] {
   margin-bottom: 0.15rem;
 }
 
+.section-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0 0 0.5rem;
+}
+
+.section-heading h3 {
+  margin: 0;
+}
+
+.export-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.export-actions a {
+  text-decoration: none;
+}
+
 .ingredients {
   margin: 0 0 1.25rem;
   padding-left: 1.1rem;

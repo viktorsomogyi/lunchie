@@ -76,6 +76,8 @@ Replace `image: .` / `build: .` in `docker-compose.yml` with that image if you w
 | POST | `/api/menu/regenerate` | New random week |
 | GET | `/api/recipes` | All recipes |
 | GET | `/api/recipes/{id}` | One recipe |
+| GET | `/api/recipes/{id}/ingredients.json` | Download recipe ingredients as JSON |
+| GET | `/api/recipes/{id}/ingredients.csv` | Download recipe ingredients as CSV |
 
 ## HTTPS / reverse proxy
 

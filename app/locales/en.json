@@ -48,6 +48,8 @@
     "minutes": "{n} min",
     "instructions": "Instructions",
     "ingredients": "Ingredients",
+    "export_json": "Export JSON",
+    "export_csv": "Export CSV",
     "nutrition": "Nutrition (per person)",
     "nutrition_mode": "Nutrition source",
     "nutrition_mode_recipe": "Whole recipe (per person)",

@@ -46,6 +46,55 @@ def test_recipe_crud_and_menu(client):
     assert "recipe" in today
 
 
+def test_recipe_ingredients_export_json_and_csv(client):
+    with db_session() as conn:
+        pasta = insert_food(
+            conn,
+            name="pasta",
+            calories_kcal=465,
+            protein_g=8,
+            carbohydrates_g=45,
+            fats_g=4,
+            salt_g=0.01,
+            fiber_g=1,
+            product_link="https://shop.example.com/pasta",
+        )
+        rid = insert_recipe(
+            conn,
+            name="Pasta dish",
+            nutrition_mode="ingredient",
+            serves=2,
+            items=[{"food_item_id": pasta, "amount": 200, "unit": "g"}],
+        )
+
+    json_resp = client.get(f"/api/recipes/{rid}/ingredients.json")
+    assert json_resp.status_code == 200
+    assert "attachment" in json_resp.headers.get("content-disposition", "")
+    assert "ingredients.json" in json_resp.headers.get("content-disposition", "")
+    payload = json_resp.json()
+    assert payload["recipe_name"] == "Pasta dish"
+    assert payload["serves"] == 2
+    assert len(payload["ingredients"]) == 1
+    assert payload["ingredients"][0]["name"] == "pasta"
+    assert payload["ingredients"][0]["amount"] == 200
+    assert payload["ingredients"][0]["unit"] == "g"
+    assert payload["ingredients"][0]["calories_kcal"] == 930
+    assert payload["ingredients"][0]["product_link"] == "https://shop.example.com/pasta"
+
+    csv_resp = client.get(f"/api/recipes/{rid}/ingredients.csv")
+    assert csv_resp.status_code == 200
+    assert "text/csv" in csv_resp.headers.get("content-type", "")
+    assert "attachment" in csv_resp.headers.get("content-disposition", "")
+    assert "ingredients.csv" in csv_resp.headers.get("content-disposition", "")
+    text = csv_resp.text
+    assert "name,amount,unit,product_link" in text
+    assert "pasta,200.0,g,https://shop.example.com/pasta" in text
+    assert "930.0" in text
+
+    assert client.get("/api/recipes/9999/ingredients.json").status_code == 404
+    assert client.get("/api/recipes/9999/ingredients.csv").status_code == 404
+
+
 def test_settings_language_and_week_length(client):
     page = client.get("/")
     assert page.status_code == 200
