@@ -414,12 +414,18 @@ nav a[aria-current="page"] {
 
 .ingredient-row {
   display: grid;
-  grid-template-columns: 2.2fr 1fr 0.9fr auto auto;
+  grid-template-columns: 2.2fr 1fr 0.9fr auto;
   gap: 0.5rem;
   margin-bottom: 0.85rem;
   align-items: center;
   padding-bottom: 0.75rem;
   border-bottom: 1px solid var(--lunchie-line);
+}
+
+.ing-row-btns {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
 }
 
 .ingredient-row select,
@@ -470,6 +476,15 @@ figure {
 
   .ingredient-row {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .ingredient-row .ing-name {
+    grid-column: 1 / -1;
+  }
+
+  .ingredient-row .ing-row-btns {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
   }
 
   .recipe-dialog .close {

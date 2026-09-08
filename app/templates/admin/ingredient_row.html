@@ -9,15 +9,17 @@
     <option value="{{ u }}" {% if ingredient.unit == u %}selected{% endif %}>{{ u }}</option>
     {% endfor %}
   </select>
-  <button type="button" class="outline small-btn"
-          hx-get="/admin/food-items/picker"
-          hx-vals='{"target": {{ row_id|tojson }} }'
-          hx-target="#modal-root"
-          hx-swap="innerHTML">
-    {{ t('food.choose') }}
-  </button>
-  <button type="button" class="outline secondary small-btn"
-          onclick="this.closest('.ingredient-row').remove()">
-    {{ t('recipe.remove') }}
-  </button>
+  <div class="ing-row-btns">
+    <button type="button" class="outline small-btn"
+            hx-get="/admin/food-items/picker"
+            hx-vals='{"target": {{ row_id|tojson }} }'
+            hx-target="#modal-root"
+            hx-swap="innerHTML">
+      {{ t('food.choose') }}
+    </button>
+    <button type="button" class="outline secondary small-btn"
+            onclick="this.closest('.ingredient-row').remove()">
+      {{ t('recipe.remove') }}
+    </button>
+  </div>
 </div>
