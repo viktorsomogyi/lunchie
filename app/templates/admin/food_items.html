@@ -49,7 +49,7 @@
           {% endif %}
         </td>
         <td class="row-actions">
-          <a href="/admin/food-items/{{ food.id }}/edit">{{ t('recipe.edit') }}</a>
+          <a href="/admin/food-items/{{ food.id }}/edit">{{ t('food.edit') }}</a>
           <form method="post" action="/admin/food-items/{{ food.id }}/delete"
                 onsubmit="return confirm({{ t('food.delete_confirm')|tojson }});">
             <button type="submit" class="outline secondary small-btn">{{ t('recipe.delete') }}</button>
