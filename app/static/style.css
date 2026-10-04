@@ -1,25 +1,104 @@
 :root {
+  color-scheme: light;
   --lunchie-bg: #f4efe6;
   --lunchie-surface: #fffdf8;
+  --lunchie-soft: #f7f1e8;
+  --lunchie-input: #ffffff;
   --lunchie-ink: #2c241c;
   --lunchie-muted: #6f6458;
   --lunchie-line: #e6ddd0;
   --lunchie-today: #2f6f62;
+  --lunchie-on-today: #fff;
   --lunchie-accent: #c45c26;
   --lunchie-accent-hover: #a84c1d;
+  --lunchie-on-accent: #fff;
+  --lunchie-error: #b42318;
+  --lunchie-glow-1: #fbe7d4;
+  --lunchie-glow-2: #dceee7;
   --lunchie-shadow: 0 10px 30px rgba(44, 36, 28, 0.08);
+  --lunchie-shadow-hover: 0 14px 34px rgba(44, 36, 28, 0.12);
+  --lunchie-dialog-shadow: 0 24px 70px rgba(44, 36, 28, 0.28);
+  --lunchie-backdrop: rgba(32, 24, 18, 0.45);
   --pico-font-family: "Segoe UI", "Helvetica Neue", sans-serif;
   --pico-background-color: var(--lunchie-bg);
   --pico-card-background-color: var(--lunchie-surface);
   --pico-card-sectionning-background-color: var(--lunchie-surface);
   --pico-primary: var(--lunchie-accent);
   --pico-primary-hover: var(--lunchie-accent-hover);
-  --pico-primary-inverse: #fff;
+  --pico-primary-inverse: var(--lunchie-on-accent);
   --pico-color: var(--lunchie-ink);
   --pico-muted-color: var(--lunchie-muted);
   --pico-border-radius: 1rem;
   --pico-form-element-border-color: var(--lunchie-line);
-  --pico-form-element-background-color: #fff;
+  --pico-form-element-background-color: var(--lunchie-input);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --lunchie-bg: #1a1714;
+  --lunchie-surface: #24201b;
+  --lunchie-soft: #2e2822;
+  --lunchie-input: #24201b;
+  --lunchie-ink: #ece3d6;
+  --lunchie-muted: #b3a697;
+  --lunchie-line: #453b30;
+  --lunchie-today: #4aa895;
+  --lunchie-on-today: #10201c;
+  --lunchie-accent: #e07b39;
+  --lunchie-accent-hover: #f0904f;
+  --lunchie-on-accent: #1c130a;
+  --lunchie-error: #ff9a92;
+  --lunchie-glow-1: rgba(224, 123, 57, 0.14);
+  --lunchie-glow-2: rgba(74, 168, 149, 0.12);
+  --lunchie-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --lunchie-shadow-hover: 0 14px 34px rgba(0, 0, 0, 0.55);
+  --lunchie-dialog-shadow: 0 24px 70px rgba(0, 0, 0, 0.6);
+  --lunchie-backdrop: rgba(0, 0, 0, 0.6);
+  --pico-background-color: var(--lunchie-bg);
+  --pico-card-background-color: var(--lunchie-surface);
+  --pico-card-sectionning-background-color: var(--lunchie-surface);
+  --pico-primary: var(--lunchie-accent);
+  --pico-primary-hover: var(--lunchie-accent-hover);
+  --pico-primary-inverse: var(--lunchie-on-accent);
+  --pico-color: var(--lunchie-ink);
+  --pico-muted-color: var(--lunchie-muted);
+  --pico-form-element-border-color: var(--lunchie-line);
+  --pico-form-element-background-color: var(--lunchie-input);
+}
+
+@media only screen and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --lunchie-bg: #1a1714;
+    --lunchie-surface: #24201b;
+    --lunchie-soft: #2e2822;
+    --lunchie-input: #24201b;
+    --lunchie-ink: #ece3d6;
+    --lunchie-muted: #b3a697;
+    --lunchie-line: #453b30;
+    --lunchie-today: #4aa895;
+    --lunchie-on-today: #10201c;
+    --lunchie-accent: #e07b39;
+    --lunchie-accent-hover: #f0904f;
+    --lunchie-on-accent: #1c130a;
+    --lunchie-error: #ff9a92;
+    --lunchie-glow-1: rgba(224, 123, 57, 0.14);
+    --lunchie-glow-2: rgba(74, 168, 149, 0.12);
+    --lunchie-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    --lunchie-shadow-hover: 0 14px 34px rgba(0, 0, 0, 0.55);
+    --lunchie-dialog-shadow: 0 24px 70px rgba(0, 0, 0, 0.6);
+    --lunchie-backdrop: rgba(0, 0, 0, 0.6);
+    --pico-background-color: var(--lunchie-bg);
+    --pico-card-background-color: var(--lunchie-surface);
+    --pico-card-sectionning-background-color: var(--lunchie-surface);
+    --pico-primary: var(--lunchie-accent);
+    --pico-primary-hover: var(--lunchie-accent-hover);
+    --pico-primary-inverse: var(--lunchie-on-accent);
+    --pico-color: var(--lunchie-ink);
+    --pico-muted-color: var(--lunchie-muted);
+    --pico-form-element-border-color: var(--lunchie-line);
+    --pico-form-element-background-color: var(--lunchie-input);
+  }
 }
 
 html, body {
@@ -30,8 +109,8 @@ html, body {
 
 body {
   background:
-    radial-gradient(1200px 400px at 10% -10%, #fbe7d4 0%, transparent 55%),
-    radial-gradient(900px 320px at 100% 0%, #dceee7 0%, transparent 50%),
+    radial-gradient(1200px 400px at 10% -10%, var(--lunchie-glow-1) 0%, transparent 55%),
+    radial-gradient(900px 320px at 100% 0%, var(--lunchie-glow-2) 0%, transparent 50%),
     var(--lunchie-bg);
 }
 
@@ -126,7 +205,7 @@ nav a[aria-current="page"] {
 
 .day-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 34px rgba(44, 36, 28, 0.12);
+  box-shadow: var(--lunchie-shadow-hover);
 }
 
 .day-card header {
@@ -166,7 +245,7 @@ nav a[aria-current="page"] {
 
 .badge {
   background: var(--lunchie-today);
-  color: #fff;
+  color: var(--lunchie-on-today);
   border-radius: 999px;
   padding: 0.15rem 0.6rem;
   font-size: 0.7rem;
@@ -212,7 +291,7 @@ nav a[aria-current="page"] {
 }
 
 .nutrition-grid > div {
-  background: #f7f1e8;
+  background: var(--lunchie-soft);
   border: 1px solid var(--lunchie-line);
   border-radius: 0.85rem;
   padding: 0.7rem 0.75rem;
@@ -256,12 +335,13 @@ nav a[aria-current="page"] {
 .instructions {
   white-space: pre-wrap;
   font-family: inherit;
-  background: #f7f1e8;
+  background: var(--lunchie-soft);
   border: 1px solid var(--lunchie-line);
   padding: 1rem 1.1rem;
   border-radius: 0.9rem;
   overflow-x: auto;
   line-height: 1.5;
+  color: var(--lunchie-ink);
 }
 
 .recipe-dialog {
@@ -271,11 +351,11 @@ nav a[aria-current="page"] {
   max-width: 680px;
   width: calc(100% - 2rem);
   background: transparent;
-  box-shadow: 0 24px 70px rgba(44, 36, 28, 0.28);
+  box-shadow: var(--lunchie-dialog-shadow);
 }
 
 .recipe-dialog::backdrop {
-  background: rgba(32, 24, 18, 0.45);
+  background: var(--lunchie-backdrop);
   backdrop-filter: blur(4px);
 }
 
@@ -309,7 +389,7 @@ nav a[aria-current="page"] {
   padding: 0;
   border: 1px solid var(--lunchie-line);
   border-radius: 999px;
-  background: #fff;
+  background: var(--lunchie-input);
   color: var(--lunchie-ink);
   font-size: 1.35rem;
   line-height: 1;
@@ -318,7 +398,7 @@ nav a[aria-current="page"] {
 
 .recipe-dialog .close:hover,
 .recipe-dialog .close:focus {
-  background: #f7f1e8;
+  background: var(--lunchie-soft);
   border-color: var(--lunchie-accent);
   color: var(--lunchie-accent);
 }
@@ -455,7 +535,7 @@ nav a[aria-current="page"] {
 }
 
 .error {
-  color: #b42318;
+  color: var(--lunchie-error);
   font-weight: 600;
 }
 
