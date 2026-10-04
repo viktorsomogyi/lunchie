@@ -9,10 +9,16 @@
     {% endif %}
   </div>
   {% if has_recipes %}
-  <form method="post" action="/menu/regenerate"
-        onsubmit="return confirm({{ t('week.regenerate_confirm')|tojson }});">
-    <button type="submit">{{ t('week.regenerate') }}</button>
-  </form>
+  <div class="week-actions">
+    <div class="export-actions">
+      <a class="outline small-btn" href="/api/menu/export.json" download>{{ t('recipe.export_json') }}</a>
+      <a class="outline small-btn" href="/api/menu/export.csv" download>{{ t('recipe.export_csv') }}</a>
+    </div>
+    <form method="post" action="/menu/regenerate"
+          onsubmit='return confirm({{ t('week.regenerate_confirm')|tojson }});'>
+      <button type="submit">{{ t('week.regenerate') }}</button>
+    </form>
+  </div>
   {% endif %}
 </section>
 

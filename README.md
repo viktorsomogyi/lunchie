@@ -78,6 +78,8 @@ Replace `image: .` / `build: .` in `docker-compose.yml` with that image if you w
 | GET | `/api/recipes/{id}` | One recipe |
 | GET | `/api/recipes/{id}/ingredients.json` | Download recipe ingredients as JSON |
 | GET | `/api/recipes/{id}/ingredients.csv` | Download recipe ingredients as CSV |
+| GET | `/api/menu/export.json` | Download current weekly menu as JSON |
+| GET | `/api/menu/export.csv` | Download current weekly menu as CSV |
 
 ## HTTPS / reverse proxy
 

@@ -130,6 +130,53 @@ def test_ingredients_export_accented_name_download_headers(client):
     assert json_resp.json()["ingredients"][0]["name"] == "tök"
 
 
+def test_weekly_menu_export_json_and_csv(client):
+    import csv as csv_module
+    import io as io_module
+
+    with db_session() as conn:
+        pasta = insert_food(conn, name="pasta", energy_kcal=465)
+        insert_recipe(
+            conn,
+            name="Pasta dish",
+            nutrition_mode="ingredient",
+            serves=2,
+            items=[{"food_item_id": pasta, "amount": 200, "unit": "g"}],
+        )
+
+    json_resp = client.get("/api/menu/export.json")
+    assert json_resp.status_code == 200
+    disposition = json_resp.headers.get("content-disposition", "")
+    assert "attachment" in disposition
+    disposition.encode("ascii")
+    assert "filename*=" in disposition
+    assert "menu.json" in disposition
+    payload = json_resp.json()
+    assert payload["week_length"] == 5
+    assert len(payload["days"]) == 5
+    assert all(day["recipe"]["name"] == "Pasta dish" for day in payload["days"])
+    assert payload["days"][0]["recipe"]["energy_kcal"] == 465
+
+    csv_resp = client.get("/api/menu/export.csv")
+    assert csv_resp.status_code == 200
+    assert "text/csv" in csv_resp.headers.get("content-type", "")
+    csv_disposition = csv_resp.headers.get("content-disposition", "")
+    assert "attachment" in csv_disposition
+    csv_disposition.encode("ascii")
+    assert "menu.csv" in csv_disposition
+    assert csv_resp.content.startswith(b"\xef\xbb\xbf")
+    rows = list(csv_module.DictReader(io_module.StringIO(csv_resp.text.lstrip("\ufeff"))))
+    assert len(rows) == 5
+    assert rows[0]["recipe"] == "Pasta dish"
+    assert rows[0]["serves"] == "2"
+    assert rows[0]["energy_kcal"] == "465.0"
+    assert rows[0]["date"]
+
+    week_page = client.get("/")
+    assert "/api/menu/export.json" in week_page.text
+    assert "/api/menu/export.csv" in week_page.text
+
+
 def test_settings_language_and_week_length(client):
     page = client.get("/")
     assert page.status_code == 200

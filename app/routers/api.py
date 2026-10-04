@@ -85,6 +85,10 @@ def menu_today():
 def menu_current():
     with db_session() as conn:
         menu = attach_dates(get_or_create_week_menu(conn))
+    return _week_menu_payload(menu)
+
+
+def _week_menu_payload(menu) -> dict:
     return {
         "week_start": menu["week_start"],
         "week_length": menu["week_length"],
@@ -98,6 +102,71 @@ def menu_current():
             for d in menu["days"]
         ],
     }
+
+
+_MENU_CSV_FIELDS = (
+    "date",
+    "day_index",
+    "recipe",
+    "serves",
+    "prep_time_minutes",
+    "energy_kcal",
+    "protein_g",
+    "carbohydrates_g",
+    "fats_g",
+    "salt_g",
+    "fiber_g",
+)
+
+
+def _menu_csv_rows(menu) -> list[dict]:
+    rows = []
+    for day in menu["days"]:
+        recipe = day["recipe"]
+        if recipe is None:
+            rows.append({"date": day["date"], "day_index": day["day_index"]})
+            continue
+        nutrition = recipe.per_person_nutrition()
+        rows.append(
+            {
+                "date": day["date"],
+                "day_index": day["day_index"],
+                "recipe": recipe.name,
+                "serves": recipe.serves,
+                "prep_time_minutes": recipe.prep_time_minutes,
+                **nutrition,
+            }
+        )
+    return rows
+
+
+@router.get("/menu/export.json")
+def menu_export_json():
+    with db_session() as conn:
+        menu = attach_dates(get_or_create_week_menu(conn))
+    filename = f"lunchie_week_{menu['week_start']}_menu.json"
+    return JSONResponse(
+        content=_week_menu_payload(menu),
+        headers={"Content-Disposition": _content_disposition(filename)},
+    )
+
+
+@router.get("/menu/export.csv")
+def menu_export_csv():
+    with db_session() as conn:
+        menu = attach_dates(get_or_create_week_menu(conn))
+    buffer = io.StringIO(newline="")
+    writer = csv.DictWriter(buffer, fieldnames=_MENU_CSV_FIELDS, extrasaction="ignore")
+    writer.writeheader()
+    for row in _menu_csv_rows(menu):
+        writer.writerow(row)
+    filename = f"lunchie_week_{menu['week_start']}_menu.csv"
+    content = ("\ufeff" + buffer.getvalue()).encode("utf-8")
+    return Response(
+        content=content,
+        media_type="text/csv; charset=utf-8",
+        headers={"Content-Disposition": _content_disposition(filename)},
+    )
 
 
 @router.post("/menu/regenerate")

@@ -37,7 +37,7 @@
         <td class="row-actions">
           <a href="/admin/recipes/{{ recipe.id }}/edit">{{ t('recipe.edit') }}</a>
           <form method="post" action="/admin/recipes/{{ recipe.id }}/delete"
-                onsubmit="return confirm({{ t('recipe.delete_confirm')|tojson }});">
+                onsubmit='return confirm({{ t('recipe.delete_confirm')|tojson }});'>
             <button type="submit" class="outline secondary small-btn">{{ t('recipe.delete') }}</button>
           </form>
         </td>

@@ -123,6 +123,55 @@ def test_food_picker_modal_and_search(client):
     assert "No matching" in none.text
 
 
+def test_food_picker_select_handler_is_valid_html(client):
+    from html.parser import HTMLParser
+
+    with db_session() as conn:
+        insert_food(conn, name="liszt")
+        insert_food(conn, name="d'Artagnan \"finom\"")
+
+    response = client.get(
+        "/admin/food-items/picker/results",
+        params={"target": "ing-row-1", "q": ""},
+    )
+    assert response.status_code == 200
+
+    class Buttons(HTMLParser):
+        def __init__(self):
+            super().__init__(convert_charrefs=False)
+            self.handlers = []
+
+        def handle_starttag(self, tag, attrs):
+            if tag == "button":
+                attrs_dict = dict(attrs)
+                if "onclick" in attrs_dict:
+                    self.handlers.append(attrs_dict["onclick"])
+
+    parser = Buttons()
+    parser.feed(response.text)
+    assert len(parser.handlers) == 2
+    for handler in parser.handlers:
+        # The whole JS call must survive as one attribute value.
+        assert handler.startswith('pickFoodItem("ing-row-1", ')
+        assert handler.endswith(')')
+    assert any('"liszt"' in handler for handler in parser.handlers)
+    assert any("finom" in handler for handler in parser.handlers)
+
+
+def test_confirm_dialogs_are_valid_html(client):
+    with db_session() as conn:
+        insert_recipe(conn, name="Gulyás")
+        insert_food(conn, name="liszt")
+
+    for url in ("/", "/admin/recipes", "/admin/food-items"):
+        page = client.get(url)
+        assert page.status_code == 200
+        # tojson output contains double quotes, so the attribute must be
+        # single-quoted; a double-quoted attribute would truncate the handler.
+        assert 'onsubmit="return confirm(' not in page.text
+    assert "return confirm(" in client.get("/").text
+
+
 def test_recipe_form_uses_food_picker(client):
     with db_session() as conn:
         insert_food(conn, name="liszt")
